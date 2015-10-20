@@ -3,7 +3,6 @@
 #include <string.h>
 #include "pager.h"
 #include "uvm.h"
-#include "mmu.h"
 
 int main(void) {
 	uvm_create();
