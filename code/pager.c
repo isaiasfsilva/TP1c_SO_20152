@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "pager.h"
 
-									/*------- INÍNIO ESTRUTURA DE DADOS ------ */
+		/*------- INÍNIO ESTRUTURA DE DADOS ------ */
 
 //[Estrutura CELL]: Responsável em armazenar todas as informações de uma entrada
 //de página do processo X.
@@ -59,10 +59,10 @@ struct Process{
 typedef struct Process PIDItem;
 
 
-											/*---------FIM ESTRUTURA DE DADOS -------*/
+		/*---------FIM ESTRUTURA DE DADOS -------*/
 
 
-											/*----[FUNÇÕES DA LISTA DE PROCESSOS]----*/
+		/*----[FUNÇÕES DA LISTA DE PROCESSOS]----*/
 
 
 
@@ -141,12 +141,12 @@ MemItem *P_isset(PIDItem *p, int PID){
 		tmp=tmp->next;
 	return tmp->next->mem;
 }
-											/*--------- FIM FUNÇÕES LISTA DE PROCESSOS----------*/
+		/*--------- FIM FUNÇÕES LISTA DE PROCESSOS----------*/
 
 
 
 
-											/*---- FUNÇÕES DA LISTA DE PÁGINAS DO PROCESSO ---- */
+		/*---- FUNÇÕES DA LISTA DE PÁGINAS DO PROCESSO ---- */
 
 
 
@@ -246,7 +246,7 @@ void M_libera(MemItem *p){
 	}
 }
 
-								/*---- FIM DAS FUNÇÕES DA LISTA DE PÁGINAS DO PROCESSO ---- */
+		/*---- FIM DAS FUNÇÕES DA LISTA DE PÁGINAS DO PROCESSO ---- */
 
 
 
