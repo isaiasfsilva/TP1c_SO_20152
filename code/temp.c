@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include "pager.h"
 
+
+	
+
+
 		/*------- INÍNIO ESTRUTURA DE DADOS ------ */
 
 //[Estrutura CELL]: Responsável em armazenar todas as informações de uma entrada
@@ -50,7 +54,7 @@ struct Process{
 
 	//[mem]: Aponta para o início da lista que contém os itens alocados para
 	//este processo
-	struct Cell *mem;
+	MemItem *mem;
 
 	//[next]: Ponteiro para o próximo processo
 	struct Process *next;
@@ -62,16 +66,23 @@ typedef struct Process PIDItem;
 		/*---------FIM ESTRUTURA DE DADOS -------*/
 
 
+		/*------- CABEÇALHOS DAS FUNÇÕES --------*/
+
+void M_libera(MemItem *p);
+
+
+		/*---------FIM CABECALHOS DE FUNÇÕES ------*/
+
 		/*----[FUNÇÕES DA LISTA DE PROCESSOS]----*/
 
 
 
 //[P_isEmpty]: Verifica se a lista está vazia
 //RETORNO:
-//		1 se lista está vazia
-//		0 se lista não está vazia.
+//		True se lista está vazia
+//		False se lista não está vazia.
 int P_isEmpty(PIDItem *p){
-	return (p->next==NULL)?1:0;
+	return (p->next==NULL);
 }
 
 //[P_start]: Cria a lista de processos. Esse será a célu cabeça
@@ -122,24 +133,67 @@ int P_remove(PIDItem *p, int PID){
 	else{
 		PIDItem *remover = tmp->next;
 		tmp->next=tmp->next->next;
-		//M_libera(remover->mem);//Remove todas as entradas da memória
+
+		M_libera(remover->mem);//Remove todas as entradas da memória
 		free(remover);
 		return 1;
 	}
 }
 
-//[P_isset]: Informa se o processo existe ou não. Se existir ele já retorna o
-//endereço da lista de páginas desse processo
+//[P_isset]: Informa se o processo existe ou não. 
 //RETORNO
-//		*MemItem: Endereço da célula cabeça dos espaçoes de memória
-//		desse processo
+//		True: se o proceesso existe
 //		
-//		NULL: Se o processo não existe
-MemItem *P_isset(PIDItem *p, int PID){
+//		False: Se o processo não existe
+int P_isset(PIDItem *p, int PID){
 	PIDItem *tmp = p;
 	while(tmp->next!=NULL && tmp->next->PID!=PID)
 		tmp=tmp->next;
-	return tmp->next->mem;
+	return tmp->next!=NULL;
+}
+
+//[P_getpages]: Retorna o início da lista de páginas para o processo 
+//RETORNO
+//		MemItem *: Se existe alguma página para o processo
+//		NULL: 		se nao existe nenhuma página para esse processo
+MemItem **P_getpages(PIDItem *p, int PID){
+	if(P_isEmpty(p))
+		return NULL;
+
+	PIDItem *tmp = p;
+	while(tmp->next!=NULL && tmp->next->PID!=PID)
+		tmp=tmp->next;
+
+    
+	return &(tmp->next->mem);
+}
+
+//[P_removedamemória]: Função responsável em escolher alguém para ser
+//retirado da memória. 
+//RETORNO:
+//		RAMAddr: Retorna o endereço REAL que acabou de ser removido
+int P_removeDaMemoria(PIDItem *p){
+	PIDItem *tmp = p->next;
+	while(1){
+		MemItem *mem = tmp->mem;
+		while(mem!=NULL){
+			if(mem->Local==0){//Se está na memória
+				if(mem->Access==0){//Esse item será removido da memória
+					mem->Local=1; //Marca que está no disco
+					if(mem->Dirty==1){
+						//[uvm_save_on_disk]//Salva item no disco 				---FALTA IMPLEMENTAR!!!
+					}
+					return mem->RAMAddr;//Retorna o endereço real liberado
+
+				}else{//Dá a segunda chance
+					mem->Access=0;
+				}
+			}
+			mem=mem->next;
+		}
+		//Esse if faz a ciclagem
+		tmp=(tmp->next==NULL)?p->next:tmp->next;
+	}
 }
 		/*--------- FIM FUNÇÕES LISTA DE PROCESSOS----------*/
 
@@ -156,7 +210,7 @@ MemItem *P_isset(PIDItem *p, int PID){
 //		1 se lista está vazia
 //		0 se lista não está vazia.
 int M_isEmpty(MemItem *p){
-	return (p->next==NULL)?1:0;
+	return (p==NULL);
 }
 
 //[M_start]: Cria a lista de página alocadas para esse
@@ -170,12 +224,11 @@ void M_start(MemItem* p){
 //RETORNO:
 //		1 se deu tudo certo
 //		0 se deu erro
-int M_insere(MemItem *p, int VAddr, int RAMAddr, char Local, char Access, char Dirty, int DiskQuadroAddr, char AddrReady){
+int M_insere(MemItem **p, int VAddr, int RAMAddr, char Local, char Access, char Dirty, int DiskQuadroAddr, char AddrReady){
 	MemItem *pnew = (MemItem *)malloc(sizeof(MemItem));
 
 	if(!pnew)	 //Se não tem memória ou deu erro
 		return 0;
-
 	//Inicializa PNEW
 	pnew->next=NULL;
 	pnew->VAddr=VAddr;
@@ -185,11 +238,13 @@ int M_insere(MemItem *p, int VAddr, int RAMAddr, char Local, char Access, char D
 	pnew->Dirty=Dirty;
 	pnew->DiskQuadroAddr=DiskQuadroAddr;
 	pnew->AddrReady=AddrReady;
+	if(M_isEmpty(*p)){
 
-	if(M_isEmpty(p))
-		p->next=pnew;
+		*p=pnew;
+
+	}
 	else{
-		MemItem *tmp = p;
+		MemItem *tmp = *p;
 		while(tmp->next!=NULL && tmp->next->VAddr<VAddr)
 			tmp=tmp->next;
 		pnew->next=tmp->next;
@@ -202,8 +257,8 @@ int M_insere(MemItem *p, int VAddr, int RAMAddr, char Local, char Access, char D
 //RETORNO
 //		1 se removeu certinho (se existia na lista)
 //		0 se deu erro
-int M_remove(MemItem *p, int VAddr){
-	MemItem *tmp = p;
+int M_remove(MemItem **p, int VAddr){
+	MemItem *tmp = *p;
 	while(tmp->next!=NULL && tmp->next->VAddr!=VAddr)
 		tmp=tmp->next;
 
@@ -227,17 +282,20 @@ int M_remove(MemItem *p, int VAddr){
 //		NULL: Se o página não existe
 MemItem *M_isset(MemItem *p, int VAddr){
 	MemItem *tmp = p;
-	while(tmp->next!=NULL && tmp->next->VAddr!=VAddr)
+	while(tmp!=NULL && tmp->VAddr!=VAddr){
+
 		tmp=tmp->next;	
-	return tmp->next;
+	}
+
+	return tmp;
 }
 
 //[M_libera]: Remove todas as entradas e recoloca na lista de endereços
 //de memória e de disco que estão livres
 void M_libera(MemItem *p){
 	MemItem *tmp = p;
-	while(tmp->next!=NULL){
-		MemItem *prox_nome=tmp;
+	while(tmp!=NULL){
+		MemItem *prox_nome=tmp->next;
 		//Disk_addlivre(tmp->DiskQuadroAddr);//Libera o quadro correspondente do disco.
 		//if(tmp->Local==0) //Se o dado estava na memória ele libera ela
 		//	Mem_addlivre(tmp->RAMAddr);
@@ -248,40 +306,66 @@ void M_libera(MemItem *p){
 
 		/*---- FIM DAS FUNÇÕES DA LISTA DE PÁGINAS DO PROCESSO ---- */
 
-
-
-
-
-
-
-
-void pager_init(int nframes, int nblocks){
-	printf("pager_init");
-}	
-
-
-void pager_create(pid_t pid){
-	printf("pager_create");
+//Função só para printar.
+void listaTudo(PIDItem *p){
+	PIDItem *tmp = p->next;
+	while(tmp!=NULL){
+		printf("->%d\n", tmp->PID);
+		MemItem *mem = tmp->mem;
+		while(mem!=NULL){
+			printf("\tVAddr: %d Access: %d\n", mem->VAddr,mem->Access );
+			mem=mem->next;
+		}
+		tmp=tmp->next;
+	}
 }
 
 
-void *pager_extend(pid_t pid){
-	printf("pager_extend");
-	return NULL;
-}
+
+int main(){
+	PIDItem *listaPID = (PIDItem *) malloc(sizeof(PIDItem));
+	if(!listaPID){
+		printf("Erro na criação da lista PID\n");
+		exit(1);
+	}
+
+	P_start(listaPID);
+	P_insere(listaPID, 10);
+	P_insere(listaPID, 11);
+	P_insere(listaPID, 12);
+	P_insere(listaPID, 13);
+	P_insere(listaPID, 14);
+
+	
+	MemItem **mem=P_getpages(listaPID,12);
+    M_insere(mem, 50,55,0,1,'1',550,'1');
+    M_insere(mem, 51,56,0,1,'1',551,'1');
+    M_insere(mem, 52,57,0,0,'1',552,'1');
+
+	mem=P_getpages(listaPID,14);
+    M_insere(mem, 58,55,0,1,'1',550,'1');
+    M_insere(mem, 59,56,0,1,'1',551,'0');
+    M_insere(mem, 60,57,0,1,'1',552,'0');
+
+	mem=P_getpages(listaPID,10);
+    M_insere(mem, 111,55,0,1,'1',550,'0');
+    M_insere(mem, 112,56,0,1,'1',551,'0');
+    M_insere(mem, 113,57,0,1,'1',552,'0');
+
+   // M_remove(mem,51);
+    listaTudo(listaPID);
+
+    //MemItem *p, int VAddr, int RAMAddr, char Local, char Access, char Dirty, int DiskQuadroAddr, char AddrReady
+	P_removeDaMemoria(listaPID);
+     listaTudo(listaPID);
+	P_remove(listaPID,10);
+    P_remove(listaPID,11);
+    P_remove(listaPID,13);
+    P_remove(listaPID,14);
+
+	
 
 
-void pager_fault(pid_t pid, void *addr){
-	printf("pager_fault");
-}
-
-
-int pager_syslog(pid_t pid, void *addr, size_t len){
-	printf("pager_syslog");
+	free(listaPID);
 	return 0;
-}
-
-
-void pager_destroy(pid_t pid){
-	printf("pager_destroy");
 }
