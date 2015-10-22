@@ -424,116 +424,34 @@ void M_libera(MemItem *p, FMItem *FreeMemory, FMItem *FreeDisk){
 
 		/*---- FIM DAS FUNÇÕES DA LISTA DE PÁGINAS DO PROCESSO ---- */
 
-//Função só para printar.
 
-void listaTudo(PIDItem *p){
-	PIDItem *tmp = p->next;
-	while(tmp!=NULL){
-		printf("->%d\n", tmp->PID);
-		MemItem *mem = tmp->mem;
-		while(mem!=NULL){
-			printf("\tVAddr: %d Access: %d\n", mem->VAddr,mem->Access );
-			mem=mem->next;
-		}
-		tmp=tmp->next;
-	}
+void pager_init(int nframes, int nblocks){
+	printf("pager_init");
+}	
+
+
+void pager_create(pid_t pid){
+	printf("pager_create");
 }
 
 
-void listaMemLivre(FMItem *p){
-	FMItem *tmp = p->next;
-	while(tmp!=NULL){
-		printf("->%d\n", tmp->RealAddr);
-		
-		tmp=tmp->next;
-	}
+void *pager_extend(pid_t pid){
+	printf("pager_extend");
+	return NULL;
 }
 
 
-
-int main(){
-	// PIDItem *listaPID = (PIDItem *) malloc(sizeof(PIDItem));
-	// if(!listaPID){
-	// 	printf("Erro na criação da lista PID\n");
-	// 	exit(1);
-	// }
-
-	// P_start(listaPID);
-	// P_insere(listaPID, 10);
-	// P_insere(listaPID, 11);
-	// P_insere(listaPID, 12);
-	// P_insere(listaPID, 13);
-	// P_insere(listaPID, 14);
-
-	
-	// MemItem **mem=P_getpages(listaPID,12);
- //    M_insere(mem, 50,55,0,1,'1',550,'1');
- //    M_insere(mem, 51,56,0,1,'1',551,'1');
- //    M_insere(mem, 52,57,0,0,'1',552,'1');
-
-	// mem=P_getpages(listaPID,14);
- //    M_insere(mem, 58,55,0,1,'1',550,'1');
- //    M_insere(mem, 59,56,0,1,'1',551,'0');
- //    M_insere(mem, 60,57,0,1,'1',552,'0');
-
-	// mem=P_getpages(listaPID,10);
- //    M_insere(mem, 111,55,0,1,'1',550,'0');
- //    M_insere(mem, 112,56,0,1,'1',551,'0');
- //    M_insere(mem, 113,57,0,1,'1',552,'0');
-
- //   // M_remove(mem,51);
- //    listaTudo(listaPID);
-
- //    //MemItem *p, int VAddr, int RAMAddr, char Local, char Access, char Dirty, int DiskQuadroAddr, char AddrReady
-	// P_removeDaMemoria(listaPID);
- //     listaTudo(listaPID);
-	// P_remove(listaPID,10);
- //    P_remove(listaPID,11);
- //    P_remove(listaPID,13);
- //    P_remove(listaPID,14);
-
-	
+void pager_fault(pid_t pid, void *addr){
+	printf("pager_fault");
+}
 
 
-	// free(listaPID);
-	
-	// listaMemoriaVazia = (FMItem *) malloc(sizeof(FMItem));
-
-	// fM_start(listaMemoriaVazia);
-	// fM_insere(listaMemoriaVazia,10);
-	// fM_insere(listaMemoriaVazia,11);
-	// fM_insere(listaMemoriaVazia,12);	fM_insere(listaMemoriaVazia,16);
-	// fM_insere(listaMemoriaVazia,13);
-	// fM_insere(listaMemoriaVazia,14);
-	// fM_insere(listaMemoriaVazia,15);
-
-	// fM_insere(listaMemoriaVazia,17);
-	// fM_insere(listaMemoriaVazia,18);
-	// listaMemLivre(listaMemoriaVazia);
-
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-	// printf("REMOVEU: %d\n", fM_reservaEspaco(listaMemoriaVazia) );
-	// listaMemLivre(listaMemoriaVazia);
-	// 
-	printf("%d\n", sizeof(pid_t) );
+int pager_syslog(pid_t pid, void *addr, size_t len){
+	printf("pager_syslog");
 	return 0;
+}
+
+
+void pager_destroy(pid_t pid){
+	printf("pager_destroy");
 }

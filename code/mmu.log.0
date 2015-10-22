@@ -1,0 +1,5 @@
+mmu_init_disk: 4194304 bytes in 1024 blocks
+mmu_init_pmem: mmap fd 4 path mmu.pmem.img.trLB0N
+mmu_init_pmem: 1048576 bytes in 256 pages
+mmu.c:121: aborting
+mmu.c:121: strerror: Address already in use
