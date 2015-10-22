@@ -78,7 +78,7 @@ struct freeMemory{
 	int RealAddr;
 
 	//[next]: Ponteiro para a próxima posição livre
-	struct freeMemory *next;
+	struct freeMemory *next;  //PENSAR COMO RESOLVER ISSO! DEPOIS EXPLICO ONDE QUE EStÁ ERRADO
 
 	//[RAMAddr]: Ponteiro para RAM (para percorrer na segunda chance)
 	MemItem *RAMAddr;
@@ -303,15 +303,14 @@ int P_removeDaMemoria(PIDItem *p){
 					mem->Local=1; //Marca que está no disco
 					if(mem->Dirty==1){
 						mem->Dirty=0;
-						mmu_disk_write(mem->RAMAddr, mem->DiskQuadroAddr);
-						//[uvm_save_on_disk]//Salva item no disco 				---FALTA IMPLEMENTAR!!!
+						mmu_disk_write(mem->RAMAddr, mem->DiskQuadroAddr);//Salva no disco
+						
 					}
 					return mem->RAMAddr;//Retorna o endereço real liberado
 
 				}else{//Dá a segunda chance
 					mem->Access=0;
-					mmu_chprot(tmp->PID, mem->VAddr,PROT_NONE);
-					//BLOQUEAR PERMISSAO DESSA PÁGINA PARA ESSE PROCESSO! MOTIVO: SABER QUANDO O PROCESSO ACESSOU					
+					mmu_chprot(tmp->PID, mem->VAddr,PROT_NONE);//BLOQUEA PERMISSAO DESSA PÁGINA PARA ESSE PROCESSO! MOTIVO: SABER QUANDO O PROCESSO ACESSOU					
 				}
 			}
 			mem=mem->next;
