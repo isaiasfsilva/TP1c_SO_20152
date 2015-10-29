@@ -8,9 +8,19 @@
 int main(void) {
 	uvm_create();
 	char *page0 = uvm_extend();
+	char *page1 = uvm_extend();
+	char *page2 = uvm_extend();
+	char *page3 = uvm_extend();
 	page0[0] = '\0';
-	strcat(page0, "hello");
+
+	page1[0] = '\0';
+	page2[0] = '\0';
+	page3[0] = '\0';
+
+	
+	//page1[0] = 'o';
+	//strcat(page0, "hello");
 	printf("%s\n", page0);
-	uvm_syslog(page0, strlen(page0)+1);
+	//uvm_syslog(page0, strlen(page0)+1);
 	exit(EXIT_SUCCESS);
 }
