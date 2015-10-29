@@ -76,6 +76,11 @@ struct freeMemory{
 
 	//[RealAddr]: Endereço real da posição vazia!
 	int RealAddr;
+	
+	//[Free]: Diz se esse quadro/frame está sendo usado/reservado
+	//	1 = true (SIM, está livre)
+	//	0 = false (NAO, está ocupado)	
+	int Free;
 
 	//[next]: Ponteiro para a próxima posição livre
 	struct freeMemory *next;  //PENSAR COMO RESOLVER ISSO! DEPOIS EXPLICO ONDE QUE EStÁ ERRADO
@@ -122,7 +127,7 @@ int fM_isEmpty(FMItem *p);
 void fM_start(FMItem* p);
 int fM_insere(FMItem *p, int Addr);
 int fM_reservaEspaco(FMItem *p);
-
+void fM_libera(FMItem *p, int Addr);
 
 
 		/*---------FIM CABECALHOS DE FUNÇÕES ------*/
@@ -134,12 +139,26 @@ int fM_reservaEspaco(FMItem *p);
 //		True se lista está vazia
 //		False se lista não está vazia.
 int fM_isEmpty(FMItem *p){
-	return (p->next==NULL);
+	FMItem *tmp = p->next;
+	while(tmp!=NULL && tmp->Free==0){
+		tmp=tmp->next;
+	}
+	return (tmp==NULL);
 }
 
 //[fM_start]: Cria a lista de processos. Esse será a célula cabeça
 void fM_start(FMItem* p){
 	p->next=NULL;
+}
+
+//[fM_libera]: Função responsável em liberar quadro/frame p/ ser usado
+void fM_libera(FMItem *p, int Addr){
+	FMItem *tmp = p->next;
+	while(tmp!=NULL && tmp->RealAddr!=Addr)
+		tmp=tmp->next;
+	if(tmp!=NULL)
+		tmp->Free=1;
+
 }
 
 //[fM_insere]: Cria uma nova entrada de uma memória livre.
@@ -156,6 +175,7 @@ int fM_insere(FMItem *p, int Addr){
 	//Inicializa PNEW
 	pnew->next=NULL;
 	pnew->RealAddr=Addr;
+	pnew->Free=1;
 	pnew->RAMAddr=NULL;
 
 	if(fM_isEmpty(p))
@@ -180,10 +200,14 @@ int fM_reservaEspaco(FMItem *p){
 	
 	if(!fM_isEmpty(p))
 	{
-		FMItem *remover = p->next;
-		p->next=p->next->next;
-		int retorno=remover->RealAddr;
-		free(remover);
+
+		FMItem *tmp = p->next;
+		while(tmp->Free==0)
+			tmp=tmp->next;
+		tmp->Free=0;
+		//p->next=p->next->next;
+		int retorno=tmp->RealAddr;
+		//free(remover);
 		return retorno;
 	}else
 		return 0;
@@ -296,7 +320,7 @@ MemItem **P_getpages(PIDItem *p, pid_t PID){
 int P_removeDaMemoria(PIDItem *p){
 	PIDItem *tmp = p->next;
 	while(1){
-		MemItem *mem = tmp->mem;
+		MemItem *mem =  tmp->mem;
 		while(mem!=NULL && mem->AddrReady==1){
 
 			if(mem->Local==0){//Se está na memória
@@ -404,9 +428,9 @@ int M_remove(MemItem **p, intptr_t *VAddr, FMItem *FreeMemory, FMItem *FreeDisk)
 		MemItem *remover = tmp->next;
 		tmp->next=tmp->next->next;
 		if(M_isonRAM(remover))//Se está na memória RAM
-			fM_insere(FreeMemory,remover->DiskQuadroAddr);//Recoloca esse quadro na lista de vazios
+			fM_libera(FreeMemory,remover->DiskQuadroAddr);//Recoloca esse quadro na lista de vazios
 			
-		fM_insere(FreeDisk,remover->DiskQuadroAddr);//Recoloca esse quadro na lista de vazios
+		fM_libera(FreeDisk,remover->DiskQuadroAddr);//Recoloca esse quadro na lista de vazios
 		free(remover);
 		return 1;
 	}
@@ -441,9 +465,9 @@ void M_libera(MemItem *p, FMItem *FreeMemory, FMItem *FreeDisk){
 	while(tmp!=NULL){
 		MemItem *prox_nome=tmp->next;
 		if(M_isonRAM(tmp))//Se está na memória RAM
-			fM_insere(FreeMemory,tmp->RAMAddr);//Recoloca esse quadro na lista de vazios
+			fM_libera(FreeMemory,tmp->RAMAddr);//Recoloca esse quadro na lista de vazios
 			
-		fM_insere(FreeDisk,tmp->DiskQuadroAddr);//Recoloca esse quadro na lista de vazios
+		fM_libera(FreeDisk,tmp->DiskQuadroAddr);//Recoloca esse quadro na lista de vazios
 		free(tmp);
 		tmp=prox_nome;
 	}
@@ -492,7 +516,7 @@ void listaMemLivre(FMItem *p){
 	printf("MEMória Livre\n");
 	FMItem *tmp = p->next;
 	while(tmp!=NULL){
-		printf("->%d\n", tmp->RealAddr);
+		printf("->RealAddr: %d   Free=%d\n", tmp->RealAddr,tmp->Free);
 		
 		tmp=tmp->next;
 	}
