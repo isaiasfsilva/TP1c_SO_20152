@@ -16,11 +16,11 @@ int main(void) {
 	page1[0] = '\0';
 	page2[0] = '\0';
 	page3[0] = '\0';
-
+	page0[0] = '\0';
 	
 	//page1[0] = 'o';
 	//strcat(page0, "hello");
-	printf("%s\n", page0);
+	//printf("%s\n", page0);
 	//uvm_syslog(page0, strlen(page0)+1);
 	exit(EXIT_SUCCESS);
 }

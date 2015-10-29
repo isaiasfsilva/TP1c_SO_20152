@@ -297,7 +297,8 @@ int P_removeDaMemoria(PIDItem *p){
 	PIDItem *tmp = p->next;
 	while(1){
 		MemItem *mem = tmp->mem;
-		while(mem!=NULL){
+		while(mem!=NULL && mem->AddrReady==1){
+
 			if(mem->Local==0){//Se está na memória
 				if(mem->Access==0){//Esse item será removido da memória
 					printf("vai remover o endereço %d da memória. Local=%d Dirty=%d\n",mem->RAMAddr,mem->Local, mem->Dirty );
@@ -429,7 +430,7 @@ if(tmp==NULL){
 	    printf("M_isset Vaddr: %ld == %ld\n", *tmp->VAddr,*VAddr);
 		tmp=tmp->next;	
 	}
-
+	
 	return tmp;
 }
 
@@ -614,6 +615,7 @@ void pager_fault(pid_t pid, void *addr){
 			m->Local=0;
 			m->RAMAddr=newMemAddr;
 			m->Dirty=0;
+m->PermissaoAcesso=PROT_READ;
 			mmu_chprot(pid,addr,PROT_READ);//Define somente leitura para quando escrever eu saber!!!
 
 		}else{ //Se está na memória deu erro foi de permissao!
