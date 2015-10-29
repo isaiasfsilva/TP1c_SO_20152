@@ -441,7 +441,7 @@ void M_libera(MemItem *p, FMItem *FreeMemory, FMItem *FreeDisk){
 	while(tmp!=NULL){
 		MemItem *prox_nome=tmp->next;
 		if(M_isonRAM(tmp))//Se está na memória RAM
-			fM_insere(FreeMemory,tmp->DiskQuadroAddr);//Recoloca esse quadro na lista de vazios
+			fM_insere(FreeMemory,tmp->RAMAddr);//Recoloca esse quadro na lista de vazios
 			
 		fM_insere(FreeDisk,tmp->DiskQuadroAddr);//Recoloca esse quadro na lista de vazios
 		free(tmp);
@@ -625,7 +625,7 @@ m->PermissaoAcesso=PROT_READ;
 				m->Dirty=1;
 				m->PermissaoAcesso=PROT_READ|PROT_WRITE;
 				mmu_chprot(pid,addr,PROT_READ|PROT_WRITE);
-			}else{//ele vai entrar aqui se ele não tem permissão de NADA (ou seja, quando retornar do disco p/ a RAM)
+			}else{//ele vai entrar aqui se ele não tem permissão de NADA 
 				printf("acho que nunca vai entrar aqui.\n");
 				mmu_chprot(pid,addr,PROT_READ); //Nesse momento o dirty bit estará zero. Então dou permissaõ somente de leitura. 
 			}
