@@ -82,6 +82,10 @@ struct freeMemory{
 	//	0 = false (NAO, está ocupado)	
 	int Free;
 
+	//[PID]: PID do processo
+	pid_t PID;
+
+
 	//[next]: Ponteiro para a próxima posição livre
 	struct freeMemory *next;  //PENSAR COMO RESOLVER ISSO! DEPOIS EXPLICO ONDE QUE EStÁ ERRADO
 
@@ -98,7 +102,7 @@ typedef struct freeMemory FMItem;
 FMItem *listaMemoriaVazia;
 FMItem *listaDiscoVazio;
 PIDItem *listaProcessos;
-int AddrSgundaChance=-1;	//endereço usado para continuar de onde parou no alg. da segunda chance
+FMItem *AddrSgundaChance=NULL;	//endereço usado para continuar de onde parou no alg. da segunda chance
 
 		/*-------FIM ESTRUTURAS GLOBAIS -------*/
 		/*------- CABEÇALHOS DAS FUNÇÕES --------*/
@@ -126,7 +130,7 @@ intptr_t M_getFirsFreeAdd(MemItem *p);
 int fM_isEmpty(FMItem *p);
 void fM_start(FMItem* p);
 int fM_insere(FMItem *p, int Addr);
-int fM_reservaEspaco(FMItem *p);
+int fM_reservaEspaco(FMItem *p, MemItem *m, pid_t PID);
 void fM_libera(FMItem *p, int Addr);
 
 
@@ -176,6 +180,7 @@ int fM_insere(FMItem *p, int Addr){
 	pnew->next=NULL;
 	pnew->RealAddr=Addr;
 	pnew->Free=1;
+	pnew->PID=0;
 	pnew->RAMAddr=NULL;
 
 	if(fM_isEmpty(p))
@@ -196,7 +201,7 @@ int fM_insere(FMItem *p, int Addr){
 //RETORNO
 //		RealAddr: Endereço do item removido que será alocado para algum processo
 //		0 se deu erro 
-int fM_reservaEspaco(FMItem *p){
+int fM_reservaEspaco(FMItem *p, MemItem *m,pid_t PID){
 	
 	if(!fM_isEmpty(p))
 	{
@@ -205,6 +210,8 @@ int fM_reservaEspaco(FMItem *p){
 		while(tmp->Free==0)
 			tmp=tmp->next;
 		tmp->Free=0;
+		tmp->PID=PID;
+		tmp->RAMAddr=m;//Faz a ligação da memória para os dados do 
 		//p->next=p->next->next;
 		int retorno=tmp->RealAddr;
 		//free(remover);
@@ -318,12 +325,15 @@ MemItem **P_getpages(PIDItem *p, pid_t PID){
 //RETORNO:
 //		RAMAddr: Retorna o endereço REAL que acabou de ser removido
 int P_removeDaMemoria(PIDItem *p){
-	PIDItem *tmp = p->next;
+	FMItem *tmp = listaMemoriaVazia->next;
+printf("AddrSegundaChance=%d\n", AddrSgundaChance->RealAddr);
+	while(tmp!=AddrSgundaChance)
+		tmp=tmp->next;
+	printf("HHH");	
 	while(1){
-		MemItem *mem =  tmp->mem;
-		while(mem!=NULL && mem->AddrReady==1){
-
-			if(mem->Local==0){//Se está na memória
+		MemItem *mem =  tmp->RAMAddr;
+		printf("\tANALIZANDO O ENDEREÇO %d da RAM p/ remover!\n",mem->RAMAddr);
+		
 				if(mem->Access==0){//Esse item será removido da memória
 					printf("vai remover o endereço %d da memória. Local=%d Dirty=%d\n",mem->RAMAddr,mem->Local, mem->Dirty );
 					mem->Local=1; //Marca que está no disco
@@ -335,17 +345,18 @@ int P_removeDaMemoria(PIDItem *p){
 						
 					}
 					printf("vai remover o endereço %d da memória. Local=%d Dirty=%d\n",mem->RAMAddr,mem->Local, mem->Dirty );
+					AddrSgundaChance=(tmp->next==NULL)?listaMemoriaVazia->next:tmp->next;					
 					return mem->RAMAddr;//Retorna o endereço real liberado
 
 				}else{//Dá a segunda chance
 					mem->Access=0;
+					mem->PermissaoAcesso=PROT_NONE;
 					mmu_chprot(tmp->PID, (void *)*mem->VAddr,PROT_NONE);//BLOQUEA PERMISSAO DESSA PÁGINA PARA ESSE PROCESSO! MOTIVO: SABER QUANDO O PROCESSO ACESSOU					
 				}
-			}
-			mem=mem->next;
-		}
+		
+		
 		//Esse if faz a ciclagem
-		tmp=(tmp->next==NULL)?p->next:tmp->next;
+		tmp=(tmp->next==NULL)?listaMemoriaVazia->next:tmp->next;
 	}
 }
 		/*--------- FIM FUNÇÕES LISTA DE PROCESSOS----------*/
@@ -538,13 +549,13 @@ void pager_init(int nframes, int nblocks){
 
 	fM_start(listaDiscoVazio);
 	fM_start(listaMemoriaVazia);
-	AddrSgundaChance=-1;
 	
 	int i;
 	for(i=0;i <nframes;i++){ //Cria a lista de memória livres na RAM
 		fM_insere(listaMemoriaVazia,i);
 	}
-
+	AddrSgundaChance=listaMemoriaVazia->next;
+	
 	for(i=0;i <nblocks;i++){ //Cria a lista de memória livres no DISCO
 		fM_insere(listaDiscoVazio, i);
 	}
@@ -570,7 +581,7 @@ void *pager_extend(pid_t pid){
 	if(fM_isEmpty(listaDiscoVazio))
 		return NULL;	
 
-	int tmp_addr= fM_reservaEspaco(listaDiscoVazio);//Espaço do disco que vai ser reservado
+	int tmp_addr= fM_reservaEspaco(listaDiscoVazio,NULL,pid);//Espaço do disco que vai ser reservado
 	intptr_t *tmp_new_addr = (intptr_t *)malloc(sizeof(intptr_t));//Endereço virtual para esse processo!
 
 	*tmp_new_addr=M_getFirsFreeAdd(*P_getpages(listaProcessos, pid));
@@ -591,9 +602,7 @@ void *pager_extend(pid_t pid){
 
 void pager_fault(pid_t pid, void *addr){
 	printf("--------------------------------PAGER FAULT\n");
-	if(AddrSgundaChance==-1){  //Inicializa contador de memória do Segunda Chance
-		AddrSgundaChance=listaMemoriaVazia->next->RealAddr;
-	}
+	
 
 
     intptr_t *tmpa;
@@ -609,7 +618,7 @@ void pager_fault(pid_t pid, void *addr){
 			newMemAddr = P_removeDaMemoria(listaProcessos); //remove alguém da memória! Segunda chance já está implementado
 		}else{
 			printf("\t\t\tpager fault - MEMORIA VAZIA\n");
-			newMemAddr = fM_reservaEspaco(listaMemoriaVazia);//Retorna o primeiro elemento de memória livre!
+			newMemAddr = fM_reservaEspaco(listaMemoriaVazia, m,pid);//Retorna o primeiro elemento de memória livre!
 		}
 
 		m->RAMAddr=newMemAddr;
@@ -632,14 +641,14 @@ void pager_fault(pid_t pid, void *addr){
 			if(fM_isEmpty(listaMemoriaVazia))//Se memória está cheia!!
 				newMemAddr = P_removeDaMemoria(listaProcessos); //remove alguém da memória! Segunda chance já está implementado
 			else
-				newMemAddr = fM_reservaEspaco(listaMemoriaVazia);//Retorna o primeiro elemento de memória livre!
+				newMemAddr = fM_reservaEspaco(listaMemoriaVazia, m,pid);//Retorna o primeiro elemento de memória livre!
 			printf("SERA COLOCADO NA POSICAO %d\n",newMemAddr );
 			mmu_disk_read(m->DiskQuadroAddr, newMemAddr);//Pega do disco e traz para a memória
 			m->Access=1;
 			m->Local=0;
 			m->RAMAddr=newMemAddr;
 			m->Dirty=0;
-m->PermissaoAcesso=PROT_READ;
+			m->PermissaoAcesso=PROT_READ;
 			mmu_chprot(pid,addr,PROT_READ);//Define somente leitura para quando escrever eu saber!!!
 
 		}else{ //Se está na memória deu erro foi de permissao!
@@ -651,6 +660,7 @@ m->PermissaoAcesso=PROT_READ;
 				mmu_chprot(pid,addr,PROT_READ|PROT_WRITE);
 			}else{//ele vai entrar aqui se ele não tem permissão de NADA 
 				printf("acho que nunca vai entrar aqui.\n");
+				m->PermissaoAcesso=PROT_READ;
 				mmu_chprot(pid,addr,PROT_READ); //Nesse momento o dirty bit estará zero. Então dou permissaõ somente de leitura. 
 			}
 			
