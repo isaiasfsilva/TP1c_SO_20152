@@ -16,7 +16,7 @@ int main(void) {
 	strcat(page0, "oie");//Escreve "oie" em 0x60000000
 
 	page1[0] = '\0';//aloca na posicao 0x60001000
-	strcat(page1,"UMMMM");//Escreve "UMMMM" em 0x60001000
+	strcat(page1,"UMM");//Escreve "UMMMM" em 0x60001000
 
 	page2[0] = '\0';//aloca na posicao 0x60002000
 	
@@ -36,7 +36,7 @@ int main(void) {
 	printf("%s\n", page3);
 
 	printf("%s\n", page1);
-
+	uvm_syslog(page1, strlen(page1)+1);
         //Deveria imprimir:
 	//     oieZERO
 	//	UMMMM

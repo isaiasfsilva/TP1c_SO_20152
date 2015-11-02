@@ -678,12 +678,62 @@ listaMemLivre(listaMemoriaVazia);
 listaMemLivre(listaDiscoVazio);
 printf("----------------------------------- END PAGE FAULT \n");
 
-//free(AddrFiltro);
+//free(AddrFiltro); //TENHO QUE DAR FREE.. MAS DÁ SEG FAULT :/;/
 }
 
 
 int pager_syslog(pid_t pid, void *addr, size_t len){
-	printf("pager_syslog");
+	// printf("--------------------------------------------------SYSLOG\n");
+	// intptr_t *VirtualAddress = (intptr_t *)malloc(sizeof(intptr_t));
+	// VirtualAddress=(intptr_t *)addr;
+	
+	// size_t lentmp=len;
+	// printf("quero ler %ld bytes  apartir de %ld\n",VirtualAddress,len );
+	// if(VirtualAddress%sysconf(_SC_PAGESIZE)!=0){
+	// 	printf("COMECO PICADO!\n");
+	// 	VirtualAddress-=(*VirtualAddress%sysconf(_SC_PAGESIZE));
+	// 	lentmp-=(sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE)));
+	// 	MemItem *m = M_isset(*P_getpages(listaProcessos, pid),VirtualAddress); //Esse porra também deu trabalho descobrir 
+	// 	if(m==NULL)
+	//  		return -1;
+	//  	if(!m->AddrReady || m->Local==1 || m->PermissaoAcesso==PROT_NONE)
+	//  		pager_fault(pid, (void *)VirtualAddress);
+
+	//  	//AQUI DEVO LER ALGUNS MÍZEROS BYTES E SALVAR
+	// }
+	// printf("VAI DEF QUANT\n");
+	// long int quant = lentmp/sysconf(_SC_PAGESIZE);//Quantidade de páginas para serem lidas
+	// long rest = lentmp % sysconf(_SC_PAGESIZE);//Quantidade de bytes a serem lidos da última página
+	// int i;
+
+
+	// for(i=0;i<quant;i++){//Loop para verificar se processo pode acessar os
+	// 	printf("\tloop--> Permissao para bloco %ld\n", VirtualAddress);
+	// 	MemItem *m = M_isset(*P_getpages(listaProcessos, pid),VirtualAddress); //Esse porra também deu trabalho descobrir 
+	// 	if(m==NULL)
+	//  		return -1;
+	//  	if(!m->AddrReady || m->Local==1 || m->PermissaoAcesso==PROT_NONE)
+	//  		pager_fault(pid, (void *)VirtualAddress);
+	
+	// 	VirtualAddress+=sysconf(_SC_PAGESIZE);
+
+	// 	//AQUI DEVO LER SC_PAGESIZE bytes
+	// }
+
+	// if(rest!=0){
+	// 	printf("RESTANTE: %d bytes\n", rest);
+	// 	MemItem *m = M_isset(*P_getpages(listaProcessos, pid),VirtualAddress); //Esse porra também deu trabalho descobrir 
+	// 	if(m==NULL)
+	//  		return -1;
+	//  	if(!m->AddrReady || m->Local==1 || m->PermissaoAcesso==PROT_NONE)
+	//  		pager_fault(pid, (void *)VirtualAddress);
+	
+	// 	//AQUI DEVO LER REST BYTES	
+	// }
+
+//AQUI PRINTAR E DAR FREE
+
+	printf("-----------------------------------------------END SYSLOG\n");
 	return 0;
 }
 

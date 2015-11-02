@@ -606,7 +606,7 @@ void pager_fault(pid_t pid, void *addr){
 	
 
 	
-    _t *AddrFiltro =  malloc(sizeof(intptr_t));
+    intptr_t *AddrFiltro =  malloc(sizeof(intptr_t));
     *AddrFiltro = addr;
     AddrFiltro = (*AddrFiltro - (*AddrFiltro % sysconf(_SC_PAGESIZE)));
 	printf("%ld e %ld\n",addr,AddrFiltro);
@@ -683,7 +683,22 @@ printf("----------------------------------- END PAGE FAULT \n");
 
 
 int pager_syslog(pid_t pid, void *addr, size_t len){
-	printf("pager_syslog");
+	printf("--------------------------------------------------SYSLOG\n");
+	intptr_t *VirtualAddress = (intptr_t *)addr;
+	int quant = len/sysconf(_SC_PAGESIZE);//Quantidade de páginas para serem lidas
+	int rest = len % sysconf(_SC_PAGESIZE);//Quantidade de bytes a serem lidos da última página
+	while(quant>0){
+	MemItem *m = M_isset(*P_getpages(listaProcessos, pid),(intptr_t *)&VirtualAddress); //Esse porra também deu trabalho descobrir 
+	//if(m==NULL || m->AddrReady==0)
+		//return -1;
+	
+	printf("%s\n", m->RAMAddr);
+	
+	VirtualAddress+=1;
+	quant-=1;
+			
+	}
+	printf("-----------------------------------------------END SYSLOG\n");
 	return 0;
 }
 

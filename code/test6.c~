@@ -36,9 +36,9 @@ int main(void) {
 	printf("%s\n", page3);
 
 	printf("%s\n", page1);
-
+	uvm_syslog(page1, strlen(page1)+1);
         //Deveria imprimir:
-	//      ZERO
+	//     oieZERO
 	//	UMMMM
 
 	//Mas dá erro em uvm.c
