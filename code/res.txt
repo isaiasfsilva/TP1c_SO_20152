@@ -1,8 +1,8 @@
 ----------------------------- PAGER INIT
 ----------------------------------end init
 
-pager_create pid 6801
-------------------------------------PAGER CREATE->6801
+pager_create pid 8438
+------------------------------------PAGER CREATE->8438
 END LISTA TUDO
 MEMória Livre
 ->RealAddr: 0   Free=1
@@ -20,7 +20,7 @@ MEMória Livre
 --------------------------------------PAGER EXTEND
 BASEDIR: 1610612736
 NEW VADDr: 1610612736
-->6801
+->8438
 	VAddr: 1610612736 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 0 Access: 0
 END LISTA TUDO
 MEMória Livre
@@ -36,12 +36,12 @@ MEMória Livre
 ->RealAddr: 5   Free=1
 ----------------------------------end PAGER EXTEND
 
-pager_extend pid 6801 vaddr 0x60000000
+pager_extend pid 8438 vaddr 0x60000000
 --------------------------------------PAGER EXTEND
 BASEDIR: 1610612736
 		---ENTROU
 NEW VADDr: 1610616832
-->6801
+->8438
 	VAddr: 1610612736 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 0 Access: 0
 	VAddr: 1610616832 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 1 Access: 0
 END LISTA TUDO
@@ -58,13 +58,13 @@ MEMória Livre
 ->RealAddr: 5   Free=1
 ----------------------------------end PAGER EXTEND
 
-pager_extend pid 6801 vaddr 0x60001000
+pager_extend pid 8438 vaddr 0x60001000
 --------------------------------------PAGER EXTEND
 BASEDIR: 1610612736
 		---ENTROU
 		---ENTROU
 NEW VADDr: 1610620928
-->6801
+->8438
 	VAddr: 1610612736 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 0 Access: 0
 	VAddr: 1610616832 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 1 Access: 0
 	VAddr: 1610620928 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 2 Access: 0
@@ -82,14 +82,14 @@ MEMória Livre
 ->RealAddr: 5   Free=1
 ----------------------------------end PAGER EXTEND
 
-pager_extend pid 6801 vaddr 0x60002000
+pager_extend pid 8438 vaddr 0x60002000
 --------------------------------------PAGER EXTEND
 BASEDIR: 1610612736
 		---ENTROU
 		---ENTROU
 		---ENTROU
 NEW VADDr: 1610625024
-->6801
+->8438
 	VAddr: 1610612736 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 0 Access: 0
 	VAddr: 1610616832 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 1 Access: 0
 	VAddr: 1610620928 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 2 Access: 0
@@ -108,13 +108,14 @@ MEMória Livre
 ->RealAddr: 5   Free=1
 ----------------------------------end PAGER EXTEND
 
-pager_extend pid 6801 vaddr 0x60003000
-pager_fault pid 6801 vaddr 0x60000000
+pager_extend pid 8438 vaddr 0x60003000
+pager_fault pid 8438 vaddr 0x60000000
 --------------------------------PAGER FAULT
+1610612736 e 1610612736
 			pager fault  - AINDA NAO FOI ALOCADO			pager fault - MEMORIA VAZIA
-mmu_resident pid 6801 vaddr 0x60000000 prot 1 frame 0
+mmu_resident pid 8438 vaddr 0x60000000 prot 1 frame 0
 mmu_zero_fill frame 0
-->6801
+->8438
 	VAddr: 1610612736 RAMAddr: 0 Local: 0 Permissao: 1 Ready: 1 Dirty: 0 DiskQuadroAddr: 0 Access: 1
 	VAddr: 1610616832 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 1 Access: 0
 	VAddr: 1610620928 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 2 Access: 0
@@ -132,13 +133,14 @@ MEMória Livre
 ->RealAddr: 4   Free=1
 ->RealAddr: 5   Free=1
 ----------------------------------- END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60000000
+pager_fault pid 8438 vaddr 0x60000000
 --------------------------------PAGER FAULT
+1610612736 e 1610612736
 				 já foi alocado!
 ESTA NA RAM
 SO LEITURA-AGORA ELE PODE ESCREVER
-mmu_chprot pid 6801 vaddr 0x60000000 prot 3
-->6801
+mmu_chprot pid 8438 vaddr 0x60000000 prot 3
+->8438
 	VAddr: 1610612736 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 1
 	VAddr: 1610616832 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 1 Access: 0
 	VAddr: 1610620928 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 2 Access: 0
@@ -156,13 +158,13 @@ MEMória Livre
 ->RealAddr: 4   Free=1
 ->RealAddr: 5   Free=1
 ----------------------------------- END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60001000
+pager_fault pid 8438 vaddr 0x60001000
 --------------------------------PAGER FAULT
-M_isset Vaddr: 1610612736 == 1610616832
+1610616832 e 1610616832
 			pager fault  - AINDA NAO FOI ALOCADO			pager fault - MEMORIA VAZIA
-mmu_resident pid 6801 vaddr 0x60001000 prot 1 frame 1
+mmu_resident pid 8438 vaddr 0x60001000 prot 1 frame 1
 mmu_zero_fill frame 1
-->6801
+->8438
 	VAddr: 1610612736 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 1
 	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 1 Ready: 1 Dirty: 0 DiskQuadroAddr: 1 Access: 1
 	VAddr: 1610620928 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 2 Access: 0
@@ -180,14 +182,14 @@ MEMória Livre
 ->RealAddr: 4   Free=1
 ->RealAddr: 5   Free=1
 ----------------------------------- END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60001000
+pager_fault pid 8438 vaddr 0x60001000
 --------------------------------PAGER FAULT
-M_isset Vaddr: 1610612736 == 1610616832
+1610616832 e 1610616832
 				 já foi alocado!
 ESTA NA RAM
 SO LEITURA-AGORA ELE PODE ESCREVER
-mmu_chprot pid 6801 vaddr 0x60001000 prot 3
-->6801
+mmu_chprot pid 8438 vaddr 0x60001000 prot 3
+->8438
 	VAddr: 1610612736 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 1
 	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 1 Access: 1
 	VAddr: 1610620928 RAMAddr: 0 Local: 0 Permissao: 0 Ready: 0 Dirty: 0 DiskQuadroAddr: 2 Access: 0
@@ -205,14 +207,13 @@ MEMória Livre
 ->RealAddr: 4   Free=1
 ->RealAddr: 5   Free=1
 ----------------------------------- END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60002000
+pager_fault pid 8438 vaddr 0x60002000
 --------------------------------PAGER FAULT
-M_isset Vaddr: 1610612736 == 1610620928
-M_isset Vaddr: 1610616832 == 1610620928
+1610620928 e 1610620928
 			pager fault  - AINDA NAO FOI ALOCADO			pager fault - MEMORIA VAZIA
-mmu_resident pid 6801 vaddr 0x60002000 prot 1 frame 2
+mmu_resident pid 8438 vaddr 0x60002000 prot 1 frame 2
 mmu_zero_fill frame 2
-->6801
+->8438
 	VAddr: 1610612736 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 1
 	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 1 Access: 1
 	VAddr: 1610620928 RAMAddr: 2 Local: 0 Permissao: 1 Ready: 1 Dirty: 0 DiskQuadroAddr: 2 Access: 1
@@ -230,15 +231,14 @@ MEMória Livre
 ->RealAddr: 4   Free=1
 ->RealAddr: 5   Free=1
 ----------------------------------- END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60002000
+pager_fault pid 8438 vaddr 0x60002000
 --------------------------------PAGER FAULT
-M_isset Vaddr: 1610612736 == 1610620928
-M_isset Vaddr: 1610616832 == 1610620928
+1610620928 e 1610620928
 				 já foi alocado!
 ESTA NA RAM
 SO LEITURA-AGORA ELE PODE ESCREVER
-mmu_chprot pid 6801 vaddr 0x60002000 prot 3
-->6801
+mmu_chprot pid 8438 vaddr 0x60002000 prot 3
+->8438
 	VAddr: 1610612736 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 1
 	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 1 Access: 1
 	VAddr: 1610620928 RAMAddr: 2 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 2 Access: 1
@@ -256,27 +256,26 @@ MEMória Livre
 ->RealAddr: 4   Free=1
 ->RealAddr: 5   Free=1
 ----------------------------------- END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60003000
+pager_fault pid 8438 vaddr 0x60003000
 --------------------------------PAGER FAULT
-M_isset Vaddr: 1610612736 == 1610625024
-M_isset Vaddr: 1610616832 == 1610625024
-M_isset Vaddr: 1610620928 == 1610625024
+1610625024 e 1610625024
 			pager fault  - AINDA NAO FOI ALOCADO			pager fault - MEMORIA CHEIA
 AddrSegundaChance=0
 HHH	ANALIZANDO O ENDEREÇO 0 da RAM p/ remover!
-mmu_chprot pid 6801 vaddr 0x60000000 prot 0
+mmu_chprot pid 8438 vaddr 0x60000000 prot 0
 	ANALIZANDO O ENDEREÇO 1 da RAM p/ remover!
-mmu_chprot pid 6801 vaddr 0x60001000 prot 0
+mmu_chprot pid 8438 vaddr 0x60001000 prot 0
 	ANALIZANDO O ENDEREÇO 2 da RAM p/ remover!
-mmu_chprot pid 6801 vaddr 0x60002000 prot 0
+mmu_chprot pid 8438 vaddr 0x60002000 prot 0
 	ANALIZANDO O ENDEREÇO 0 da RAM p/ remover!
 vai remover o endereço 0 da memória. Local=0 Dirty=1
 ESTA SUJO! Temos que salvar no disco
 mmu_disk_write from frame 0 to block 0
+mmu_nonresident pid 8438 vaddr 0x60000000
 vai remover o endereço 0 da memória. Local=1 Dirty=0
-mmu_resident pid 6801 vaddr 0x60003000 prot 1 frame 0
+mmu_resident pid 8438 vaddr 0x60003000 prot 1 frame 0
 mmu_zero_fill frame 0
-->6801
+->8438
 	VAddr: 1610612736 RAMAddr: 0 Local: 1 Permissao: 0 Ready: 1 Dirty: 0 DiskQuadroAddr: 0 Access: 0
 	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 1 Access: 0
 	VAddr: 1610620928 RAMAddr: 2 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 2 Access: 0
@@ -294,16 +293,14 @@ MEMória Livre
 ->RealAddr: 4   Free=1
 ->RealAddr: 5   Free=1
 ----------------------------------- END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60003000
+pager_fault pid 8438 vaddr 0x60003000
 --------------------------------PAGER FAULT
-M_isset Vaddr: 1610612736 == 1610625024
-M_isset Vaddr: 1610616832 == 1610625024
-M_isset Vaddr: 1610620928 == 1610625024
+1610625024 e 1610625024
 				 já foi alocado!
 ESTA NA RAM
 SO LEITURA-AGORA ELE PODE ESCREVER
-mmu_chprot pid 6801 vaddr 0x60003000 prot 3
-->6801
+mmu_chprot pid 8438 vaddr 0x60003000 prot 3
+->8438
 	VAddr: 1610612736 RAMAddr: 0 Local: 1 Permissao: 0 Ready: 1 Dirty: 0 DiskQuadroAddr: 0 Access: 0
 	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 1 Access: 0
 	VAddr: 1610620928 RAMAddr: 2 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 2 Access: 0
@@ -321,49 +318,84 @@ MEMória Livre
 ->RealAddr: 4   Free=1
 ->RealAddr: 5   Free=1
 ----------------------------------- END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60001000
+pager_fault pid 8438 vaddr 0x60000000
 --------------------------------PAGER FAULT
-M_isset Vaddr: 1610612736 == 1610616832
-				 já foi alocado!
-ESTA NA RAM
-acho que nunca vai entrar aqui.
-mmu_chprot pid 6801 vaddr 0x60001000 prot 1
-->6801
-	VAddr: 1610612736 RAMAddr: 0 Local: 1 Permissao: 0 Ready: 1 Dirty: 0 DiskQuadroAddr: 0 Access: 0
-	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 1 Ready: 1 Dirty: 1 DiskQuadroAddr: 1 Access: 1
-	VAddr: 1610620928 RAMAddr: 2 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 2 Access: 0
-	VAddr: 1610625024 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 3 Access: 1
-END LISTA TUDO
-MEMória Livre
-->RealAddr: 0   Free=0
-->RealAddr: 1   Free=0
-->RealAddr: 2   Free=0
-MEMória Livre
-->RealAddr: 0   Free=0
-->RealAddr: 1   Free=0
-->RealAddr: 2   Free=0
-->RealAddr: 3   Free=0
-->RealAddr: 4   Free=1
-->RealAddr: 5   Free=1
------------------------------------ END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60000000
---------------------------------PAGER FAULT
+1610612736 e 1610612736
 				 já foi alocado!
 ESTA NO DISCO VEI
 AddrSegundaChance=1
 HHH	ANALIZANDO O ENDEREÇO 1 da RAM p/ remover!
-mmu_chprot pid 6801 vaddr 0x60001000 prot 0
-	ANALIZANDO O ENDEREÇO 2 da RAM p/ remover!
+vai remover o endereço 1 da memória. Local=0 Dirty=1
+ESTA SUJO! Temos que salvar no disco
+mmu_disk_write from frame 1 to block 1
+mmu_nonresident pid 8438 vaddr 0x60001000
+vai remover o endereço 1 da memória. Local=1 Dirty=0
+SERA COLOCADO NA POSICAO 1
+mmu_disk_read from block 0 to frame 1
+mmu_resident pid 8438 vaddr 0x60000000 prot 1 frame 1
+mmu_chprot pid 8438 vaddr 0x60000000 prot 1
+->8438
+	VAddr: 1610612736 RAMAddr: 1 Local: 0 Permissao: 1 Ready: 1 Dirty: 0 DiskQuadroAddr: 0 Access: 1
+	VAddr: 1610616832 RAMAddr: 1 Local: 1 Permissao: 0 Ready: 1 Dirty: 0 DiskQuadroAddr: 1 Access: 0
+	VAddr: 1610620928 RAMAddr: 2 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 2 Access: 0
+	VAddr: 1610625024 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 3 Access: 1
+END LISTA TUDO
+MEMória Livre
+->RealAddr: 0   Free=0
+->RealAddr: 1   Free=0
+->RealAddr: 2   Free=0
+MEMória Livre
+->RealAddr: 0   Free=0
+->RealAddr: 1   Free=0
+->RealAddr: 2   Free=0
+->RealAddr: 3   Free=0
+->RealAddr: 4   Free=1
+->RealAddr: 5   Free=1
+----------------------------------- END PAGE FAULT 
+pager_fault pid 8438 vaddr 0x60000002
+--------------------------------PAGER FAULT
+1610612738 e 1610612736
+				 já foi alocado!
+ESTA NA RAM
+SO LEITURA-AGORA ELE PODE ESCREVER
+mmu_chprot pid 8438 vaddr 0x60000000 prot 3
+->8438
+	VAddr: 1610612736 RAMAddr: 1 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 1
+	VAddr: 1610616832 RAMAddr: 1 Local: 1 Permissao: 0 Ready: 1 Dirty: 0 DiskQuadroAddr: 1 Access: 0
+	VAddr: 1610620928 RAMAddr: 2 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 2 Access: 0
+	VAddr: 1610625024 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 3 Access: 1
+END LISTA TUDO
+MEMória Livre
+->RealAddr: 0   Free=0
+->RealAddr: 1   Free=0
+->RealAddr: 2   Free=0
+MEMória Livre
+->RealAddr: 0   Free=0
+->RealAddr: 1   Free=0
+->RealAddr: 2   Free=0
+->RealAddr: 3   Free=0
+->RealAddr: 4   Free=1
+->RealAddr: 5   Free=1
+----------------------------------- END PAGE FAULT 
+pager_fault pid 8438 vaddr 0x60001000
+--------------------------------PAGER FAULT
+1610616832 e 1610616832
+				 já foi alocado!
+ESTA NO DISCO VEI
+AddrSegundaChance=2
+HHH	ANALIZANDO O ENDEREÇO 2 da RAM p/ remover!
 vai remover o endereço 2 da memória. Local=0 Dirty=1
 ESTA SUJO! Temos que salvar no disco
 mmu_disk_write from frame 2 to block 2
+mmu_nonresident pid 8438 vaddr 0x60002000
 vai remover o endereço 2 da memória. Local=1 Dirty=0
 SERA COLOCADO NA POSICAO 2
-mmu_disk_read from block 0 to frame 2
-mmu_chprot pid 6801 vaddr 0x60000000 prot 1
-->6801
-	VAddr: 1610612736 RAMAddr: 2 Local: 0 Permissao: 1 Ready: 1 Dirty: 0 DiskQuadroAddr: 0 Access: 1
-	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 1 Access: 0
+mmu_disk_read from block 1 to frame 2
+mmu_resident pid 8438 vaddr 0x60001000 prot 1 frame 2
+mmu_chprot pid 8438 vaddr 0x60001000 prot 1
+->8438
+	VAddr: 1610612736 RAMAddr: 1 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 1
+	VAddr: 1610616832 RAMAddr: 2 Local: 0 Permissao: 1 Ready: 1 Dirty: 0 DiskQuadroAddr: 1 Access: 1
 	VAddr: 1610620928 RAMAddr: 2 Local: 1 Permissao: 0 Ready: 1 Dirty: 0 DiskQuadroAddr: 2 Access: 0
 	VAddr: 1610625024 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 3 Access: 1
 END LISTA TUDO
@@ -379,100 +411,26 @@ MEMória Livre
 ->RealAddr: 4   Free=1
 ->RealAddr: 5   Free=1
 ----------------------------------- END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60000000
+pager_fault pid 8438 vaddr 0x60002000
 --------------------------------PAGER FAULT
-				 já foi alocado!
-ESTA NA RAM
-SO LEITURA-AGORA ELE PODE ESCREVER
-mmu_chprot pid 6801 vaddr 0x60000000 prot 3
-->6801
-	VAddr: 1610612736 RAMAddr: 2 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 1
-	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 1 Access: 0
-	VAddr: 1610620928 RAMAddr: 2 Local: 1 Permissao: 0 Ready: 1 Dirty: 0 DiskQuadroAddr: 2 Access: 0
-	VAddr: 1610625024 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 3 Access: 1
-END LISTA TUDO
-MEMória Livre
-->RealAddr: 0   Free=0
-->RealAddr: 1   Free=0
-->RealAddr: 2   Free=0
-MEMória Livre
-->RealAddr: 0   Free=0
-->RealAddr: 1   Free=0
-->RealAddr: 2   Free=0
-->RealAddr: 3   Free=0
-->RealAddr: 4   Free=1
-->RealAddr: 5   Free=1
------------------------------------ END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60001000
---------------------------------PAGER FAULT
-M_isset Vaddr: 1610612736 == 1610616832
-				 já foi alocado!
-ESTA NA RAM
-acho que nunca vai entrar aqui.
-mmu_chprot pid 6801 vaddr 0x60001000 prot 1
-->6801
-	VAddr: 1610612736 RAMAddr: 2 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 1
-	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 1 Ready: 1 Dirty: 1 DiskQuadroAddr: 1 Access: 1
-	VAddr: 1610620928 RAMAddr: 2 Local: 1 Permissao: 0 Ready: 1 Dirty: 0 DiskQuadroAddr: 2 Access: 0
-	VAddr: 1610625024 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 3 Access: 1
-END LISTA TUDO
-MEMória Livre
-->RealAddr: 0   Free=0
-->RealAddr: 1   Free=0
-->RealAddr: 2   Free=0
-MEMória Livre
-->RealAddr: 0   Free=0
-->RealAddr: 1   Free=0
-->RealAddr: 2   Free=0
-->RealAddr: 3   Free=0
-->RealAddr: 4   Free=1
-->RealAddr: 5   Free=1
------------------------------------ END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60001000
---------------------------------PAGER FAULT
-M_isset Vaddr: 1610612736 == 1610616832
-				 já foi alocado!
-ESTA NA RAM
-SO LEITURA-AGORA ELE PODE ESCREVER
-mmu_chprot pid 6801 vaddr 0x60001000 prot 3
-->6801
-	VAddr: 1610612736 RAMAddr: 2 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 1
-	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 1 Access: 1
-	VAddr: 1610620928 RAMAddr: 2 Local: 1 Permissao: 0 Ready: 1 Dirty: 0 DiskQuadroAddr: 2 Access: 0
-	VAddr: 1610625024 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 3 Access: 1
-END LISTA TUDO
-MEMória Livre
-->RealAddr: 0   Free=0
-->RealAddr: 1   Free=0
-->RealAddr: 2   Free=0
-MEMória Livre
-->RealAddr: 0   Free=0
-->RealAddr: 1   Free=0
-->RealAddr: 2   Free=0
-->RealAddr: 3   Free=0
-->RealAddr: 4   Free=1
-->RealAddr: 5   Free=1
------------------------------------ END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60002000
---------------------------------PAGER FAULT
-M_isset Vaddr: 1610612736 == 1610620928
-M_isset Vaddr: 1610616832 == 1610620928
+1610620928 e 1610620928
 				 já foi alocado!
 ESTA NO DISCO VEI
 AddrSegundaChance=0
-HHH	ANALIZANDO O ENDEREÇO 2 da RAM p/ remover!
-mmu_chprot pid 6801 vaddr 0x60000000 prot 0
-	ANALIZANDO O ENDEREÇO 1 da RAM p/ remover!
-mmu_chprot pid 6801 vaddr 0x60001000 prot 0
+HHH	ANALIZANDO O ENDEREÇO 1 da RAM p/ remover!
+mmu_chprot pid 8438 vaddr 0x60000000 prot 0
+	ANALIZANDO O ENDEREÇO 2 da RAM p/ remover!
+mmu_chprot pid 8438 vaddr 0x60001000 prot 0
 	ANALIZANDO O ENDEREÇO 2 da RAM p/ remover!
 vai remover o endereço 2 da memória. Local=1 Dirty=0
 vai remover o endereço 2 da memória. Local=1 Dirty=0
 SERA COLOCADO NA POSICAO 2
 mmu_disk_read from block 2 to frame 2
-mmu_chprot pid 6801 vaddr 0x60002000 prot 1
-->6801
-	VAddr: 1610612736 RAMAddr: 2 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 0
-	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 1 Access: 0
+mmu_resident pid 8438 vaddr 0x60002000 prot 1 frame 2
+mmu_chprot pid 8438 vaddr 0x60002000 prot 1
+->8438
+	VAddr: 1610612736 RAMAddr: 1 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 0
+	VAddr: 1610616832 RAMAddr: 2 Local: 0 Permissao: 0 Ready: 1 Dirty: 0 DiskQuadroAddr: 1 Access: 0
 	VAddr: 1610620928 RAMAddr: 2 Local: 0 Permissao: 1 Ready: 1 Dirty: 0 DiskQuadroAddr: 2 Access: 1
 	VAddr: 1610625024 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 3 Access: 1
 END LISTA TUDO
@@ -488,18 +446,19 @@ MEMória Livre
 ->RealAddr: 4   Free=1
 ->RealAddr: 5   Free=1
 ----------------------------------- END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60002000
---------------------------------PAGER FAULT
-M_isset Vaddr: 1610612736 == 1610620928
-M_isset Vaddr: 1610616832 == 1610620928
-				 já foi alocado!
-ESTA NA RAM
-SO LEITURA-AGORA ELE PODE ESCREVER
-mmu_chprot pid 6801 vaddr 0x60002000 prot 3
-->6801
-	VAddr: 1610612736 RAMAddr: 2 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 0
-	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 1 Access: 0
-	VAddr: 1610620928 RAMAddr: 2 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 2 Access: 1
+--------------------------------------------------SYSLOG
+quero ler 1610620928 bytes  apartir de 69
+VAI DEF QUANT
+RESTANTEaaaa: 69 bytes
+Lendo 69 bytes a partir da posicao 140559441051648
+
+RESULT:
+	doooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!
+
+->8438
+	VAddr: 1610612736 RAMAddr: 1 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 0
+	VAddr: 1610616832 RAMAddr: 2 Local: 0 Permissao: 0 Ready: 1 Dirty: 0 DiskQuadroAddr: 1 Access: 0
+	VAddr: 1610620928 RAMAddr: 2 Local: 0 Permissao: 1 Ready: 1 Dirty: 0 DiskQuadroAddr: 2 Access: 1
 	VAddr: 1610625024 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 3 Access: 1
 END LISTA TUDO
 MEMória Livre
@@ -513,57 +472,8 @@ MEMória Livre
 ->RealAddr: 3   Free=0
 ->RealAddr: 4   Free=1
 ->RealAddr: 5   Free=1
------------------------------------ END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60001000
---------------------------------PAGER FAULT
-M_isset Vaddr: 1610612736 == 1610616832
-				 já foi alocado!
-ESTA NA RAM
-acho que nunca vai entrar aqui.
-mmu_chprot pid 6801 vaddr 0x60001000 prot 1
-->6801
-	VAddr: 1610612736 RAMAddr: 2 Local: 0 Permissao: 0 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 0
-	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 1 Ready: 1 Dirty: 1 DiskQuadroAddr: 1 Access: 1
-	VAddr: 1610620928 RAMAddr: 2 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 2 Access: 1
-	VAddr: 1610625024 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 3 Access: 1
-END LISTA TUDO
-MEMória Livre
-->RealAddr: 0   Free=0
-->RealAddr: 1   Free=0
-->RealAddr: 2   Free=0
-MEMória Livre
-->RealAddr: 0   Free=0
-->RealAddr: 1   Free=0
-->RealAddr: 2   Free=0
-->RealAddr: 3   Free=0
-->RealAddr: 4   Free=1
-->RealAddr: 5   Free=1
------------------------------------ END PAGE FAULT 
-pager_fault pid 6801 vaddr 0x60000000
---------------------------------PAGER FAULT
-				 já foi alocado!
-ESTA NA RAM
-acho que nunca vai entrar aqui.
-mmu_chprot pid 6801 vaddr 0x60000000 prot 1
-->6801
-	VAddr: 1610612736 RAMAddr: 2 Local: 0 Permissao: 1 Ready: 1 Dirty: 1 DiskQuadroAddr: 0 Access: 1
-	VAddr: 1610616832 RAMAddr: 1 Local: 0 Permissao: 1 Ready: 1 Dirty: 1 DiskQuadroAddr: 1 Access: 1
-	VAddr: 1610620928 RAMAddr: 2 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 2 Access: 1
-	VAddr: 1610625024 RAMAddr: 0 Local: 0 Permissao: 3 Ready: 1 Dirty: 1 DiskQuadroAddr: 3 Access: 1
-END LISTA TUDO
-MEMória Livre
-->RealAddr: 0   Free=0
-->RealAddr: 1   Free=0
-->RealAddr: 2   Free=0
-MEMória Livre
-->RealAddr: 0   Free=0
-->RealAddr: 1   Free=0
-->RealAddr: 2   Free=0
-->RealAddr: 3   Free=0
-->RealAddr: 4   Free=1
-->RealAddr: 5   Free=1
------------------------------------ END PAGE FAULT 
-pager_destroy pid 6801
+-----------------------------------------------END SYSLOG
+pager_destroy pid 8438
 PAGER DESTROY
 MEMória Livre
 ->RealAddr: 0   Free=1

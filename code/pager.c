@@ -326,14 +326,15 @@ MemItem **P_getpages(PIDItem *p, pid_t PID){
 //		RAMAddr: Retorna o endereço REAL que acabou de ser removido
 int P_removeDaMemoria(PIDItem *p){
 	FMItem *tmp = listaMemoriaVazia->next;
-printf("AddrSegundaChance=%d\n", AddrSgundaChance->RealAddr);
+	printf("AddrSegundaChance=%d\n", AddrSgundaChance->RealAddr);
 	while(tmp!=AddrSgundaChance)
 		tmp=tmp->next;
-	printf("HHH");	
+	printf("tmpREAL: %d\n",tmp->RAMAddr->RAMAddr );	
 	while(1){
+
 		MemItem *mem =  tmp->RAMAddr;
 		printf("\tANALIZANDO O ENDEREÇO %d da RAM p/ remover!\n",mem->RAMAddr);
-		
+		if(mem->Local==0){
 				if(mem->Access==0){//Esse item será removido da memória
 					printf("vai remover o endereço %d da memória. Local=%d Dirty=%d\n",mem->RAMAddr,mem->Local, mem->Dirty );
 					mem->Local=1; //Marca que está no disco
@@ -355,7 +356,7 @@ printf("AddrSegundaChance=%d\n", AddrSgundaChance->RealAddr);
 					mem->PermissaoAcesso=PROT_NONE;
 					mmu_chprot(tmp->PID, (void *)*mem->VAddr,PROT_NONE);//BLOQUEA PERMISSAO DESSA PÁGINA PARA ESSE PROCESSO! MOTIVO: SABER QUANDO O PROCESSO ACESSOU					
 				}
-		
+		}
 		
 		//Esse if faz a ciclagem
 		tmp=(tmp->next==NULL)?listaMemoriaVazia->next:tmp->next;
@@ -687,15 +688,17 @@ int pager_syslog(pid_t pid, void *addr, size_t len){
 	intptr_t *VirtualAddress = (intptr_t *)malloc(sizeof(intptr_t));
 	*VirtualAddress=addr;
 	char *tmpstring=malloc(len);
-
+	tmpstring[0] = '\0';
 	size_t lentmp=len;
 	printf("quero ler %ld bytes  apartir de %ld\n",*VirtualAddress,len );
 	
 	if(*VirtualAddress%sysconf(_SC_PAGESIZE)!=0){
+		long int startadd=*VirtualAddress;
 		printf("COMECO PICADO!\n");
 		*VirtualAddress-=(*VirtualAddress%sysconf(_SC_PAGESIZE));
 		lentmp-=(sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE)));
-		
+		printf("-->quero ler %ld bytes  apartir de %ld\n",*VirtualAddress,lentmp );
+	
 		MemItem *m = M_isset(*P_getpages(listaProcessos, pid),VirtualAddress); //Esse porra também deu trabalho descobrir 
 		if(m==NULL)
 	 		return -1;
@@ -703,24 +706,56 @@ int pager_syslog(pid_t pid, void *addr, size_t len){
 	 		pager_fault(pid, (void *)VirtualAddress);
 
 
+	 	//Essa sequencia aloca o início //TA COM BUG AQUOI!!!
+		char *phead = malloc(((sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE)))>len)?len:(sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE))));
+		long int *tmpread=malloc(sizeof(long int));
+		*tmpread=(pmem+m->RAMAddr*sysconf(_SC_PAGESIZE)+(startadd%sysconf(_SC_PAGESIZE)));
+
+   		printf("-->quero ler %ld bytes  apartir de %ld\n",*VirtualAddress,((sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE)))>len)?len:(sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE)) ));
+	
+   		memcpy(phead, *tmpread,((sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE)))>len)?len:(sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE))));
+   		printf("LeEU %d\n",phead );
+   		strcat(tmpstring,*tmpread);
+	 	free(tmpread);
+	 	free(phead);
+
+	 	*VirtualAddress+=sysconf(_SC_PAGESIZE);
+
+	 	printf("LENTMP====>>> %d\n", lentmp);
+	 	if((long int)lentmp<0)
+	 		lentmp=0;
+	 	
+
+	 	printf("LENTMP====>>> %d\n", lentmp);
 	 	//AQUI DEVO LER ALGUNS MÍZEROS BYTES E SALVAR
 	}
 
 
 	printf("VAI DEF QUANT\n");
 	long int quant = lentmp/sysconf(_SC_PAGESIZE);//Quantidade de páginas para serem lidas
-	long rest = lentmp % sysconf(_SC_PAGESIZE);//Quantidade de bytes a serem lidos da última página
+	long int rest = lentmp % sysconf(_SC_PAGESIZE);//Quantidade de bytes a serem lidos da última página
 	int i;
+	printf("QUANT=%d e REST=%d\n",quant,rest );
 
-
-	for(i=0;i<quant;i++){//Loop para verificar se processo pode acessar os
+	for(i=0;i<quant+1;i++){//Loop para verificar se processo pode acessar os
 		printf("\tloop--> Permissao para bloco %ld\n", VirtualAddress);
 		MemItem *m = M_isset(*P_getpages(listaProcessos, pid),VirtualAddress); //Esse porra também deu trabalho descobrir 
 		if(m==NULL)
 	 		return -1;
 	 	if(!m->AddrReady || m->Local==1 || m->PermissaoAcesso==PROT_NONE)
 	 		pager_fault(pid, (void *)VirtualAddress);
-	
+		printf("endereço virtual: %ld\n",*VirtualAddress );
+	//Essa sequencia aloca o restante
+		char *phead = malloc(sysconf(_SC_PAGESIZE));
+		long int *tmpread=malloc(sizeof(long int));
+		*tmpread=(pmem+m->RAMAddr*sysconf(_SC_PAGESIZE));
+   		
+   		memcpy(phead, *tmpread,sysconf(_SC_PAGESIZE));
+   		strcat(tmpstring,*tmpread);
+	 	free(tmpread);
+	 	free(phead);
+
+
 		*VirtualAddress+=sysconf(_SC_PAGESIZE);
 
 		//AQUI DEVO LER SC_PAGESIZE bytes, ou seja, páginas inteiras
@@ -729,7 +764,7 @@ int pager_syslog(pid_t pid, void *addr, size_t len){
 
 
 	if(rest!=0){
-		printf("RESTANTE: %d bytes\n", rest);
+		printf("RESTANTEaaaa: %d bytes\n", rest);
 		MemItem *m = M_isset(*P_getpages(listaProcessos, pid),VirtualAddress); //Esse porra também deu trabalho descobrir 
 		if(m==NULL)
 	 		return -1;
@@ -737,17 +772,16 @@ int pager_syslog(pid_t pid, void *addr, size_t len){
 	 		pager_fault(pid, (void *)VirtualAddress);
 		
 
-
+	 	//Essa sequencia aloca o restante
 		char *phead = malloc(rest);
 		long int *tmpread=malloc(sizeof(long int));
 		*tmpread=(pmem+m->RAMAddr*sysconf(_SC_PAGESIZE));
-   		printf("Lendo %ld bytes a partir da posicao %ld\n\n",rest,tmpread );
-   		memcpy(phead, tmpread,rest);
-	 	printf("%s\n",phead );
-
+   		
+   		printf("Lendo %ld bytes a partir da posicao %ld\n\n",rest,*tmpread );
+   		memcpy(phead, *tmpread,rest);
+   		strcat(tmpstring,*tmpread);
 	 	free(tmpread);
 	 	free(phead);
-		//AQUI DEVO LER REST BYTES	
 	}
 printf("RESULT:\n\t%s\n\n", tmpstring);
 free(tmpstring);

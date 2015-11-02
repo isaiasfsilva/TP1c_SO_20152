@@ -13,13 +13,67 @@ int main(void) {
 	char *page3 = uvm_extend();
 	
 	page0[0] = '\0';//aloca na posicao 0x60000000
-	strcat(page0, "oie");//Escreve "oie" em 0x60000000
+	strcat(page0, "Oi");//Escreve "oie" em 0x60000000
 
 	page1[0] = '\0';//aloca na posicao 0x60001000
 	strcat(page1,"UMM");//Escreve "UMMMM" em 0x60001000
 
 	page2[0] = '\0';//aloca na posicao 0x60002000
-	
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!");
+	strcat(page2,"defoooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooois!p");
 	page3[0] = '\0';//aloca na posicao 0x60003000
 
 	strcat(page0, "ZERO"); 
@@ -36,7 +90,9 @@ int main(void) {
 	printf("%s\n", page3);
 
 	printf("%s\n", page1);
-	uvm_syslog(page0, strlen(page0)+1);
+	
+
+	uvm_syslog(page2+2, strlen(page2));
         //Deveria imprimir:
 	//     oieZERO
 	//	UMMMM
