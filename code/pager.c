@@ -609,10 +609,10 @@ void pager_fault(pid_t pid, void *addr){
     intptr_t *AddrFiltro =  malloc(sizeof(intptr_t));
     *AddrFiltro = addr;
     *AddrFiltro = (*AddrFiltro - (*AddrFiltro % sysconf(_SC_PAGESIZE)));
-	printf("%ld e %ld\n",addr,AddrFiltro);
+	printf("%ld e %ld\n",addr,*AddrFiltro);
     
 
-	MemItem *m = M_isset(*P_getpages(listaProcessos, pid),(intptr_t *)&AddrFiltro); //Esse porra também deu trabalho descobrir 
+	MemItem *m = M_isset(*P_getpages(listaProcessos, pid),(intptr_t *)AddrFiltro); //Esse porra também deu trabalho descobrir 
 
 	if(!m->AddrReady){//Se ainda não foi alocado!
 		printf("\t\t\tpager fault  - AINDA NAO FOI ALOCADO");
@@ -632,7 +632,7 @@ void pager_fault(pid_t pid, void *addr){
 		m->AddrReady=1;
 		m->PermissaoAcesso=PROT_READ;
 
-		mmu_resident(pid,AddrFiltro,m->RAMAddr,PROT_READ);
+		mmu_resident(pid,*AddrFiltro,m->RAMAddr,PROT_READ);
 
 		mmu_zero_fill(m->RAMAddr);	//zera endereços na memória!
 		//CHAMAR FUNCAO ZERA PAGINA NA MEMÓRIA
@@ -653,9 +653,9 @@ void pager_fault(pid_t pid, void *addr){
 			m->RAMAddr=newMemAddr;
 			m->Dirty=0;
 			m->PermissaoAcesso=PROT_READ;
-			mmu_resident(pid,AddrFiltro,newMemAddr,PROT_READ);
+			mmu_resident(pid,*AddrFiltro,newMemAddr,PROT_READ);
 
-			mmu_chprot(pid,AddrFiltro,PROT_READ);//Define somente leitura para quando escrever eu saber!!!
+			mmu_chprot(pid,*AddrFiltro,PROT_READ);//Define somente leitura para quando escrever eu saber!!!
 
 		}else{ //Se está na memória deu erro foi de permissao!
 			printf("ESTA NA RAM\n");
@@ -663,11 +663,11 @@ void pager_fault(pid_t pid, void *addr){
 				printf("SO LEITURA-AGORA ELE PODE ESCREVER\n");
 				m->Dirty=1;
 				m->PermissaoAcesso=PROT_READ|PROT_WRITE;
-				mmu_chprot(pid,AddrFiltro,PROT_READ|PROT_WRITE);
+				mmu_chprot(pid,*AddrFiltro,PROT_READ|PROT_WRITE);
 			}else{//ele vai entrar aqui se ele não tem permissão de NADA 
 				printf("acho que nunca vai entrar aqui.\n");
 				m->PermissaoAcesso=PROT_READ;
-				mmu_chprot(pid,AddrFiltro,PROT_READ); //Nesse momento o dirty bit estará zero. Então dou permissaõ somente de leitura. 
+				mmu_chprot(pid,*AddrFiltro,PROT_READ); //Nesse momento o dirty bit estará zero. Então dou permissaõ somente de leitura. 
 			}
 			
 			m->Access=1;//Usado na segunda chance
@@ -685,7 +685,7 @@ free(AddrFiltro); //TENHO QUE DAR FREE.. MAS DÁ SEG FAULT :/;/
 int pager_syslog(pid_t pid, void *addr, size_t len){
 	printf("--------------------------------------------------SYSLOG\n");
 	intptr_t *VirtualAddress = (intptr_t *)malloc(sizeof(intptr_t));
-	*VirtualAddress=*addr;
+	*VirtualAddress=addr;
 	char *tmpstring=malloc(len);
 
 	size_t lentmp=len;
@@ -741,7 +741,7 @@ int pager_syslog(pid_t pid, void *addr, size_t len){
 		char *phead = malloc(rest);
 		long int *tmpread=malloc(sizeof(long int));
 		*tmpread=(pmem+m->RAMAddr*sysconf(_SC_PAGESIZE));
-   		
+   		printf("Lendo %ld bytes a partir da posicao %ld\n\n",rest,tmpread );
    		memcpy(phead, tmpread,rest);
 	 	printf("%s\n",phead );
 
