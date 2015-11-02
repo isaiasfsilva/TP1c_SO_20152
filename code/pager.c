@@ -87,7 +87,7 @@ struct freeMemory{
 
 
 	//[next]: Ponteiro para a próxima posição livre
-	struct freeMemory *next;  //PENSAR COMO RESOLVER ISSO! DEPOIS EXPLICO ONDE QUE EStÁ ERRADO
+	struct freeMemory *next;  
 
 	//[RAMAddr]: Ponteiro para RAM (para percorrer na segunda chance)
 	MemItem *RAMAddr;

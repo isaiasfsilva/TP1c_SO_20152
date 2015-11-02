@@ -87,3 +87,5 @@ mmu_client_syslog sock 6 pid 9380: vaddr 0x60002002 len 4096 retcode 0
 mmu_client_thread sock 6 pid 9380: recv
 mmu_client_exit sock 6 pid 9380: exiting cleanly
 mmu_client_thread sock 6 pid 9380: finished
+mmu_accept_loop: exiting
+mmu_destroy: starting
