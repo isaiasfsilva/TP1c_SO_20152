@@ -18,7 +18,23 @@ Lucas de Miranda Bastos <lucasmbastos@dcc.ufmg.br> 50%
 
 3. Referências bibliográficas
 
+	* manpage memcpy
+	* conversar com o isaías
+
 4. Estruturas de dados
 
-Descreva e justifique as estruturas de dados utilizadas em sua
-solução.
+-> typedef struct Cell MemItem;
+	Estrutura que representa uma entrada na tabela de páginas, possui
+informações necessárias para que o paginador sabia o estado daquela
+posicao de memória (se ela é válida, se está suja, endereço real...).
+	Cada entrada aponta para uma outra entrada formando assim uma
+lista encadeada que é a própria tabela de páginas.
+
+-> typedef struct Process PIDItem;
+	Uma lista que relaciona cada processo com sua tabela de páginas.
+Cada célula da lista possui um PID, e um apontador pro início da ta-
+bela do processo.
+
+-> typedef struct freeMemory FMItem;
+	Lista de blocos livres, necessário para que o paginador saiba que
+blocos estão disponíveis para serem alocados.
