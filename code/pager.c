@@ -608,7 +608,7 @@ void pager_fault(pid_t pid, void *addr){
 	
     intptr_t *AddrFiltro =  malloc(sizeof(intptr_t));
     *AddrFiltro = addr;
-    AddrFiltro = (*AddrFiltro - (*AddrFiltro % sysconf(_SC_PAGESIZE)));
+    *AddrFiltro = (*AddrFiltro - (*AddrFiltro % sysconf(_SC_PAGESIZE)));
 	printf("%ld e %ld\n",addr,AddrFiltro);
     
 
@@ -678,30 +678,35 @@ listaMemLivre(listaMemoriaVazia);
 listaMemLivre(listaDiscoVazio);
 printf("----------------------------------- END PAGE FAULT \n");
 
-//free(AddrFiltro); //TENHO QUE DAR FREE.. MAS DÁ SEG FAULT :/;/
+free(AddrFiltro); //TENHO QUE DAR FREE.. MAS DÁ SEG FAULT :/;/
 }
 
 
 int pager_syslog(pid_t pid, void *addr, size_t len){
 	printf("--------------------------------------------------SYSLOG\n");
 	intptr_t *VirtualAddress = (intptr_t *)malloc(sizeof(intptr_t));
-	*VirtualAddress=addr;
+	*VirtualAddress=*addr;
 	char *tmpstring=malloc(len);
 
 	size_t lentmp=len;
 	printf("quero ler %ld bytes  apartir de %ld\n",*VirtualAddress,len );
+	
 	if(*VirtualAddress%sysconf(_SC_PAGESIZE)!=0){
 		printf("COMECO PICADO!\n");
 		*VirtualAddress-=(*VirtualAddress%sysconf(_SC_PAGESIZE));
 		lentmp-=(sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE)));
+		
 		MemItem *m = M_isset(*P_getpages(listaProcessos, pid),VirtualAddress); //Esse porra também deu trabalho descobrir 
 		if(m==NULL)
 	 		return -1;
 	 	if(!m->AddrReady || m->Local==1 || m->PermissaoAcesso==PROT_NONE)
 	 		pager_fault(pid, (void *)VirtualAddress);
 
+
 	 	//AQUI DEVO LER ALGUNS MÍZEROS BYTES E SALVAR
 	}
+
+
 	printf("VAI DEF QUANT\n");
 	long int quant = lentmp/sysconf(_SC_PAGESIZE);//Quantidade de páginas para serem lidas
 	long rest = lentmp % sysconf(_SC_PAGESIZE);//Quantidade de bytes a serem lidos da última página
@@ -721,6 +726,8 @@ int pager_syslog(pid_t pid, void *addr, size_t len){
 		//AQUI DEVO LER SC_PAGESIZE bytes, ou seja, páginas inteiras
 	}
 
+
+
 	if(rest!=0){
 		printf("RESTANTE: %d bytes\n", rest);
 		MemItem *m = M_isset(*P_getpages(listaProcessos, pid),VirtualAddress); //Esse porra também deu trabalho descobrir 
@@ -734,6 +741,7 @@ int pager_syslog(pid_t pid, void *addr, size_t len){
 		char *phead = malloc(rest);
 		long int *tmpread=malloc(sizeof(long int));
 		*tmpread=(pmem+m->RAMAddr*sysconf(_SC_PAGESIZE));
+   		
    		memcpy(phead, tmpread,rest);
 	 	printf("%s\n",phead );
 
