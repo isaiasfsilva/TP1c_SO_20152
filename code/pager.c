@@ -326,28 +326,22 @@ MemItem **P_getpages(PIDItem *p, pid_t PID){
 //		RAMAddr: Retorna o endereço REAL que acabou de ser removido
 int P_removeDaMemoria(PIDItem *p){
 	FMItem *tmp = listaMemoriaVazia->next;
-	printf("AddrSegundaChance=%d\n", AddrSgundaChance->RealAddr);
 	while(tmp!=AddrSgundaChance)
 		tmp=tmp->next;
-	printf("tmpREAL: %d\n",tmp->RAMAddr->RAMAddr );	
 	while(1){
 
 		MemItem *mem =  tmp->RAMAddr;
-		printf("\tANALIZANDO O ENDEREÇO %d da RAM p/ remover!\n",mem->RAMAddr);
 		if(mem->Local==0){
 				if(mem->Access==0){//Esse item será removido da memória
-					printf("vai remover o endereço %d da memória. Local=%d Dirty=%d\n",mem->RAMAddr,mem->Local, mem->Dirty );
 					mem->Local=1; //Marca que está no disco
 				
 					if(mem->Dirty==1){
-						printf("ESTA SUJO! Temos que salvar no disco\n");
 						mem->Dirty=0;
 						mmu_disk_write(mem->RAMAddr, mem->DiskQuadroAddr);//Salva no disco
 					
 						mmu_nonresident(tmp->PID, (void *)*mem->VAddr);
 						
 					}
-					printf("vai remover o endereço %d da memória. Local=%d Dirty=%d\n",mem->RAMAddr,mem->Local, mem->Dirty );
 					AddrSgundaChance=(tmp->next==NULL)?listaMemoriaVazia->next:tmp->next;					
 					return mem->RAMAddr;//Retorna o endereço real liberado
 
@@ -460,14 +454,9 @@ int M_remove(MemItem **p, intptr_t *VAddr, FMItem *FreeMemory, FMItem *FreeDisk)
 MemItem *M_isset(MemItem *p, intptr_t *VAddr){
 
 	MemItem *tmp = p;
-if(tmp==NULL){
-	printf(">>>>>>>>>NAO TEM NADA ALOCADO PARA ESSE PROCESSO\n");
-}
-
 	while(tmp!=NULL && *tmp->VAddr!=*VAddr){
 	    tmp=tmp->next;	
 	}
-	
 	return tmp;
 }
 
@@ -481,6 +470,7 @@ void M_libera(MemItem *p, FMItem *FreeMemory, FMItem *FreeDisk){
 			fM_libera(FreeMemory,tmp->RAMAddr);//Recoloca esse quadro na lista de vazios
 			
 		fM_libera(FreeDisk,tmp->DiskQuadroAddr);//Recoloca esse quadro na lista de vazios
+		free(tmp->VAddr);
 		free(tmp);
 		tmp=prox_nome;
 	}
@@ -492,10 +482,7 @@ void M_libera(MemItem *p, FMItem *FreeMemory, FMItem *FreeDisk){
 intptr_t M_getFirsFreeAdd(MemItem *p){
 	MemItem *tmp = p;
 	intptr_t tmp_addr = UVM_BASEADDR;
-	printf("BASEDIR: %ld\n",tmp_addr );
-
 	while(tmp!=NULL && tmp_addr==*tmp->VAddr){
-		printf("\t\t---ENTROU\n");
 		tmp=tmp->next;
 		tmp_addr+=sysconf(_SC_PAGESIZE);
 	}
@@ -505,45 +492,8 @@ intptr_t M_getFirsFreeAdd(MemItem *p){
 
 		/*---- FIM DAS FUNÇÕES DA LISTA DE PÁGINAS DO PROCESSO ---- */
 
-
-
-
-
-///FUNÇÕES PARA DEBUG
-void listaTudo(PIDItem *p){
-	PIDItem *tmp = p->next;
-	while(tmp!=NULL){
-		printf("->%d\n", tmp->PID);
-		MemItem *mem = tmp->mem;
-		while(mem!=NULL){
-			printf("\tVAddr: %ld RAMAddr: %d Local: %d Permissao: %d Ready: %d Dirty: %d DiskQuadroAddr: %d Access: %d\n", *mem->VAddr,mem->RAMAddr,mem->Local, mem->PermissaoAcesso, mem->AddrReady, mem->Dirty, mem->DiskQuadroAddr, mem->Access );
-			mem=mem->next;
-		}
-		printf("END LISTA TUDO\n");
-		tmp=tmp->next;
-	}
-}
-
-
-void listaMemLivre(FMItem *p){
-	printf("MEMória Livre\n");
-	FMItem *tmp = p->next;
-	while(tmp!=NULL){
-		printf("->RealAddr: %d   Free=%d\n", tmp->RealAddr,tmp->Free);
-		
-		tmp=tmp->next;
-	}
-}
-
-///FIM FUNCOES DEBUG
-
-
-
-
 //[pager_init]: Repsonsável em incializar estruturas iniciais
 void pager_init(int nframes, int nblocks){ 
-	printf("----------------------------- PAGER INIT\n");
-
 	listaProcessos = (PIDItem *) malloc(sizeof(PIDItem));
 	listaDiscoVazio = (FMItem *)malloc(sizeof(FMItem));
 	listaMemoriaVazia=(FMItem *)malloc(sizeof(FMItem));
@@ -561,25 +511,18 @@ void pager_init(int nframes, int nblocks){
 	for(i=0;i <nblocks;i++){ //Cria a lista de memória livres no DISCO
 		fM_insere(listaDiscoVazio, i);
 	}
-printf("----------------------------------end init\n\n");
 }	
 
 //[pager_create]: Responsável em add um processo. 
 //DESC LONGA:
 //			Basicamente ele add o processo na lista encadeada de processos
 void pager_create(pid_t pid){
-		printf("------------------------------------PAGER CREATE");
-		P_insere(listaProcessos,pid);
+	P_insere(listaProcessos,pid);
 
-	listaTudo(listaProcessos);
-	listaMemLivre(listaMemoriaVazia);
-	listaMemLivre(listaDiscoVazio);
-	printf("-----------------------------------------end PAGER CREATE\n\n");
 }
 
 
 void *pager_extend(pid_t pid){
-	printf("--------------------------------------PAGER EXTEND\n");
 	if(fM_isEmpty(listaDiscoVazio))
 		return NULL;	
 
@@ -587,15 +530,10 @@ void *pager_extend(pid_t pid){
 	intptr_t *tmp_new_addr = (intptr_t *)malloc(sizeof(intptr_t));//Endereço virtual para esse processo!
 
 	*tmp_new_addr=M_getFirsFreeAdd(*P_getpages(listaProcessos, pid));
-	printf("NEW VADDr: %ld\n", *tmp_new_addr);
 
 	M_insere(P_getpages(listaProcessos, pid),tmp_new_addr,0,0,0,0,tmp_addr,0);
 	
 
-	listaTudo(listaProcessos);
-	listaMemLivre(listaMemoriaVazia);
-	listaMemLivre(listaDiscoVazio);
-	printf("----------------------------------end PAGER EXTEND\n\n");
 
 	return (void *)*tmp_new_addr;//SIM! TEM QUE TER ESSES 2 ASTERISCOS PORRA! Deu uma trabalheira descobrir essa merda que você nem imagina
 
@@ -603,26 +541,21 @@ void *pager_extend(pid_t pid){
 
 
 void pager_fault(pid_t pid, void *addr){
-	printf("--------------------------------PAGER FAULT\n");
 	
 
 	
     intptr_t *AddrFiltro =  malloc(sizeof(intptr_t));
     *AddrFiltro = addr;
     *AddrFiltro = (*AddrFiltro - (*AddrFiltro % sysconf(_SC_PAGESIZE)));
-	printf("%ld e %ld\n",addr,*AddrFiltro);
     
 
 	MemItem *m = M_isset(*P_getpages(listaProcessos, pid),(intptr_t *)AddrFiltro); //Esse porra também deu trabalho descobrir 
 
 	if(!m->AddrReady){//Se ainda não foi alocado!
-		printf("\t\t\tpager fault  - AINDA NAO FOI ALOCADO");
 		int newMemAddr;
 		if(fM_isEmpty(listaMemoriaVazia)){//Se memória está cheia!!
-			printf("\t\t\tpager fault - MEMORIA CHEIA\n");
 			newMemAddr = P_removeDaMemoria(listaProcessos); //remove alguém da memória! Segunda chance já está implementado
 		}else{
-			printf("\t\t\tpager fault - MEMORIA VAZIA\n");
 			newMemAddr = fM_reservaEspaco(listaMemoriaVazia, m,pid);//Retorna o primeiro elemento de memória livre!
 		}
 
@@ -639,15 +572,12 @@ void pager_fault(pid_t pid, void *addr){
 		//CHAMAR FUNCAO ZERA PAGINA NA MEMÓRIA
 
 	}else{//Se já está alocado!
-		printf("\t\t\t\t já foi alocado!\n");
 		if(m->Local==1){//Se está no disco tenho que trazer da memória
-			printf("ESTA NO DISCO VEI\n");
 			int newMemAddr;
 			if(fM_isEmpty(listaMemoriaVazia))//Se memória está cheia!!
 				newMemAddr = P_removeDaMemoria(listaProcessos); //remove alguém da memória! Segunda chance já está implementado
 			else
 				newMemAddr = fM_reservaEspaco(listaMemoriaVazia, m,pid);//Retorna o primeiro elemento de memória livre!
-			printf("SERA COLOCADO NA POSICAO %d\n",newMemAddr );
 			mmu_disk_read(m->DiskQuadroAddr, newMemAddr);//Pega do disco e traz para a memória
 			m->Access=1;
 			m->Local=0;
@@ -659,14 +589,11 @@ void pager_fault(pid_t pid, void *addr){
 			mmu_chprot(pid,*AddrFiltro,PROT_READ);//Define somente leitura para quando escrever eu saber!!!
 
 		}else{ //Se está na memória deu erro foi de permissao!
-			printf("ESTA NA RAM\n");
 			if(m->PermissaoAcesso==PROT_READ){//Só tem permissaõ de leitura, e o processo está tentando escreever
-				printf("SO LEITURA-AGORA ELE PODE ESCREVER\n");
 				m->Dirty=1;
 				m->PermissaoAcesso=PROT_READ|PROT_WRITE;
 				mmu_chprot(pid,*AddrFiltro,PROT_READ|PROT_WRITE);
 			}else{//ele vai entrar aqui se ele não tem permissão de NADA 
-				printf("acho que nunca vai entrar aqui.\n");
 				m->PermissaoAcesso=PROT_READ;
 				mmu_chprot(pid,*AddrFiltro,PROT_READ); //Nesse momento o dirty bit estará zero. Então dou permissaõ somente de leitura. 
 			}
@@ -674,32 +601,23 @@ void pager_fault(pid_t pid, void *addr){
 			m->Access=1;//Usado na segunda chance
 		}
 	}
-listaTudo(listaProcessos);
-listaMemLivre(listaMemoriaVazia);
-listaMemLivre(listaDiscoVazio);
-printf("----------------------------------- END PAGE FAULT \n");
-
 free(AddrFiltro); //TENHO QUE DAR FREE.. MAS DÁ SEG FAULT :/;/
 }
 
 
 int pager_syslog(pid_t pid, void *addr, size_t len){
-	printf("--------------------------------------------------SYSLOG\n");
 	intptr_t *VirtualAddress = (intptr_t *)malloc(sizeof(intptr_t));
 	*VirtualAddress=addr;
 	char *tmpstring=malloc(len);
 	tmpstring[0] = '\0';
 	size_t lentmp=len;
-	printf("quero ler %ld bytes  apartir de %ld\n",*VirtualAddress,len );
 	
 	if(*VirtualAddress%sysconf(_SC_PAGESIZE)!=0){
 		long int startadd=*VirtualAddress;
-		printf("COMECO PICADO!\n");
 		*VirtualAddress-=(*VirtualAddress%sysconf(_SC_PAGESIZE));
 		lentmp-=(sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE)));
-		printf("-->quero ler %ld bytes  apartir de %ld\n",*VirtualAddress,lentmp );
 	
-		MemItem *m = M_isset(*P_getpages(listaProcessos, pid),VirtualAddress); //Esse porra também deu trabalho descobrir 
+		MemItem *m = M_isset(*P_getpages(listaProcessos, pid),VirtualAddress); 
 		if(m==NULL)
 	 		return -1;
 	 	if(!m->AddrReady || m->Local==1 || m->PermissaoAcesso==PROT_NONE)
@@ -711,40 +629,31 @@ int pager_syslog(pid_t pid, void *addr, size_t len){
 		long int *tmpread=malloc(sizeof(long int));
 		*tmpread=(pmem+m->RAMAddr*sysconf(_SC_PAGESIZE)+(startadd%sysconf(_SC_PAGESIZE)));
 
-   		printf("-->quero ler %ld bytes  apartir de %ld\n",*VirtualAddress,((sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE)))>len)?len:(sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE)) ));
-	
+   	
    		memcpy(phead, *tmpread,((sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE)))>len)?len:(sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE))));
-   		printf("LeEU %d\n",phead );
    		strcat(tmpstring,*tmpread);
 	 	free(tmpread);
 	 	free(phead);
 
 	 	*VirtualAddress+=sysconf(_SC_PAGESIZE);
 
-	 	printf("LENTMP====>>> %d\n", lentmp);
 	 	if((long int)lentmp<0)
 	 		lentmp=0;
 	 	
 
-	 	printf("LENTMP====>>> %d\n", lentmp);
-	 	//AQUI DEVO LER ALGUNS MÍZEROS BYTES E SALVAR
 	}
 
 
-	printf("VAI DEF QUANT\n");
 	long int quant = lentmp/sysconf(_SC_PAGESIZE);//Quantidade de páginas para serem lidas
 	long int rest = lentmp % sysconf(_SC_PAGESIZE);//Quantidade de bytes a serem lidos da última página
 	int i;
-	printf("QUANT=%d e REST=%d\n",quant,rest );
-
+	
 	for(i=0;i<quant+1;i++){//Loop para verificar se processo pode acessar os
-		printf("\tloop--> Permissao para bloco %ld\n", VirtualAddress);
 		MemItem *m = M_isset(*P_getpages(listaProcessos, pid),VirtualAddress); //Esse porra também deu trabalho descobrir 
 		if(m==NULL)
 	 		return -1;
 	 	if(!m->AddrReady || m->Local==1 || m->PermissaoAcesso==PROT_NONE)
 	 		pager_fault(pid, (void *)VirtualAddress);
-		printf("endereço virtual: %ld\n",*VirtualAddress );
 	//Essa sequencia aloca o restante
 		char *phead = malloc(sysconf(_SC_PAGESIZE));
 		long int *tmpread=malloc(sizeof(long int));
@@ -758,13 +667,11 @@ int pager_syslog(pid_t pid, void *addr, size_t len){
 
 		*VirtualAddress+=sysconf(_SC_PAGESIZE);
 
-		//AQUI DEVO LER SC_PAGESIZE bytes, ou seja, páginas inteiras
 	}
 
 
 
 	if(rest!=0){
-		printf("RESTANTEaaaa: %d bytes\n", rest);
 		MemItem *m = M_isset(*P_getpages(listaProcessos, pid),VirtualAddress); //Esse porra também deu trabalho descobrir 
 		if(m==NULL)
 	 		return -1;
@@ -777,19 +684,14 @@ int pager_syslog(pid_t pid, void *addr, size_t len){
 		long int *tmpread=malloc(sizeof(long int));
 		*tmpread=(pmem+m->RAMAddr*sysconf(_SC_PAGESIZE));
    		
-   		printf("Lendo %ld bytes a partir da posicao %ld\n\n",rest,*tmpread );
    		memcpy(phead, *tmpread,rest);
    		strcat(tmpstring,*tmpread);
 	 	free(tmpread);
 	 	free(phead);
 	}
-printf("RESULT:\n\t%s\n\n", tmpstring);
-free(tmpstring);
-//AQUI PRINTAR E DAR FREE
-listaTudo(listaProcessos);
-listaMemLivre(listaMemoriaVazia);
-listaMemLivre(listaDiscoVazio);
-	printf("-----------------------------------------------END SYSLOG\n");
+	printf("pager_syslog pid %d %s\n", (int)pid, tmpstring);
+	free(VirtualAddress);
+	free(tmpstring);
 	return 0;
 }
 
@@ -798,12 +700,8 @@ listaMemLivre(listaDiscoVazio);
 //			Dentro da P_remove ele já libera e recoloca as 
 //			memórias (RAM e DISCO) na lista de prontos
 void pager_destroy(pid_t pid){
-	printf("PAGER DESTROY\n");
 	P_remove(listaProcessos, pid,listaMemoriaVazia, listaDiscoVazio);
-	listaTudo(listaProcessos);
-	listaMemLivre(listaMemoriaVazia);
-	listaMemLivre(listaDiscoVazio);
-	printf("end PAGER DESTROY\n\n");
+
 }
 
 
