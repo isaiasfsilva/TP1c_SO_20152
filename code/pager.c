@@ -648,7 +648,7 @@ int pager_syslog(pid_t pid, void *addr, size_t len){
 	long int rest = lentmp % sysconf(_SC_PAGESIZE);//Quantidade de bytes a serem lidos da última página
 	int i;
 	
-	for(i=0;i<quant+1;i++){//Loop para verificar se processo pode acessar os
+	for(i=0;i<quant;i++){//Loop para verificar se processo pode acessar os
 		MemItem *m = M_isset(*P_getpages(listaProcessos, pid),VirtualAddress); //Esse porra também deu trabalho descobrir 
 		if(m==NULL)
 	 		return -1;
@@ -703,5 +703,4 @@ void pager_destroy(pid_t pid){
 	P_remove(listaProcessos, pid,listaMemoriaVazia, listaDiscoVazio);
 
 }
-
 
