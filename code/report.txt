@@ -19,7 +19,11 @@ Lucas de Miranda Bastos <lucasmbastos@dcc.ufmg.br> 50%
 3. Referências bibliográficas
 
 	* manpage memcpy
-	* conversar com o isaías
+	* manpage fork
+	* manpage exec
+	* manpage wait
+	* http://www.cplusplus.com/
+	  -> Disponibilzam alguns exeplos para funções em C
 
 4. Estruturas de dados
 
@@ -38,3 +42,25 @@ bela do processo.
 -> typedef struct freeMemory FMItem;
 	Lista de blocos livres, necessário para que o paginador saiba que
 blocos estão disponíveis para serem alocados.
+
+5. Testes
+
+Os testes foram feitos com os seguintes objetivos:
+Favor testar com NFRAMES = 3 para que os resultados sejam os espera-
+dos .
+
+Teste 1: Escreve em endereço que não é o começo de uma pagina. Logo o
+pager tem que descobrir a qual página pertence.
+Teste 2: Teste disponibilizado pelo professor.
+Teste 3: Tenta ler n bytes a partir de uma posicao que não é começo de
+página. É a mesma  lógica, ele tem que descobrir a qual página perten-
+ce e olhar se tem permissão.
+Teste 4: Testa algoritmo de segunda chance, transferindo os dados en-
+tre disco e RAM e usa a syslog em duas páginas diferentes para formar
+a frase "Hi World!"
+Teste 5: Testa todos os anteriores juntos através de chamadas fork e
+exec. NOTA: Ele usa os binários dos testes, estamos enviando também
+um makefile para compilar os testes de forma que os arquivos possuam
+os nomes corretos. o comando 'make test' gera todos os binários dos
+testes e ./test5 executa o teste. Pedimos desculpas pelo trabalho
+extra.

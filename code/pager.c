@@ -4,6 +4,7 @@
 #include "mmu.h"
 #include <unistd.h>
 #include <sys/mman.h>
+#include <string.h>
 
 	
 
@@ -239,7 +240,7 @@ int P_isEmpty(PIDItem *p){
 	return (p->next==NULL);
 }
 
-//[P_start]: Cria a lista de processos. Esse será a célu cabeça
+//[P_start]: Cria a lista de processos. Esse será a célula cabeça
 void P_start(PIDItem* p){
 	p->next=NULL;
 }
@@ -553,7 +554,7 @@ void pager_fault(pid_t pid, void *addr){
 
 	
     intptr_t *AddrFiltro =  malloc(sizeof(intptr_t));
-    *AddrFiltro = addr;
+    *AddrFiltro = (intptr_t) addr;
     *AddrFiltro = (*AddrFiltro - (*AddrFiltro % sysconf(_SC_PAGESIZE)));
     
    	MemItem *m = M_isset(*P_getpages(listaProcessos, pid),(intptr_t *)AddrFiltro);
@@ -572,7 +573,7 @@ void pager_fault(pid_t pid, void *addr){
 		m->AddrReady=1;
 		m->PermissaoAcesso=PROT_READ;
 
-		mmu_resident(pid,*AddrFiltro,m->RAMAddr,PROT_READ);
+		mmu_resident(pid, (void *)*AddrFiltro,m->RAMAddr,PROT_READ);
 
 		mmu_zero_fill(m->RAMAddr);	//zera endereços na memória!
 		//CHAMAR FUNCAO ZERA PAGINA NA MEMÓRIA
@@ -590,30 +591,30 @@ void pager_fault(pid_t pid, void *addr){
 			m->RAMAddr=newMemAddr;
 			m->Dirty=0;
 			m->PermissaoAcesso=PROT_READ;
-			mmu_resident(pid,*AddrFiltro,newMemAddr,PROT_READ);
+			mmu_resident(pid,(void *) *AddrFiltro,newMemAddr,PROT_READ);
 
-			mmu_chprot(pid,*AddrFiltro,PROT_READ);//Define somente leitura para quando escrever eu saber!!!
+			mmu_chprot(pid,(void *) *AddrFiltro,PROT_READ);//Define somente leitura para quando escrever eu saber!!!
 
 		}else{ //Se está na memória deu erro foi de permissao!
 			if(m->PermissaoAcesso==PROT_READ){//Só tem permissaõ de leitura, e o processo está tentando escreever
 				m->Dirty=1;
 				m->PermissaoAcesso=PROT_READ|PROT_WRITE;
-				mmu_chprot(pid,*AddrFiltro,PROT_READ|PROT_WRITE);
+				mmu_chprot(pid, (void *) *AddrFiltro,PROT_READ|PROT_WRITE);
 			}else{//ele vai entrar aqui se ele não tem permissão de NADA 
 				m->PermissaoAcesso=PROT_READ;
-				mmu_chprot(pid,*AddrFiltro,PROT_READ); //Nesse momento o dirty bit estará zero. Então dou permissaõ somente de leitura. 
+				mmu_chprot(pid, (void *) *AddrFiltro,PROT_READ); //Nesse momento o dirty bit estará zero. Então dou permissaõ somente de leitura. 
 			}
 			
 			m->Access=1;//Usado na segunda chance
 		}
 	}
-free(AddrFiltro); //TENHO QUE DAR FREE.. MAS DÁ SEG FAULT :/;/
+free(AddrFiltro);
 }
 
 
 int pager_syslog(pid_t pid, void *addr, size_t len){
 	intptr_t *VirtualAddress = (intptr_t *)malloc(sizeof(intptr_t));
-	*VirtualAddress=addr;
+	*VirtualAddress= (intptr_t) addr;
 	char *tmpstring=malloc(len);
 	tmpstring[0] = '\0';
 	size_t lentmp=len;
@@ -630,14 +631,14 @@ int pager_syslog(pid_t pid, void *addr, size_t len){
 	 		pager_fault(pid, (void *)VirtualAddress);
 
 
-	 	//Essa sequencia aloca o início //TA COM BUG AQUOI!!!
+	 	//Essa sequencia aloca o início
 		char *phead = malloc(((sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE)))>len)?len:(sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE))));
 		long int *tmpread=malloc(sizeof(long int));
-		*tmpread=(pmem+m->RAMAddr*sysconf(_SC_PAGESIZE)+(startadd%sysconf(_SC_PAGESIZE)));
+		*tmpread= (long int) (pmem+m->RAMAddr*sysconf(_SC_PAGESIZE)+(startadd%sysconf(_SC_PAGESIZE)));
 
    	
-   		memcpy(phead, *tmpread,((sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE)))>len)?len:(sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE))));
-   		strcat(tmpstring,*tmpread);
+   		memcpy(phead, (const void *) *tmpread,((sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE)))>len)?len:(sysconf(_SC_PAGESIZE)-(*VirtualAddress%sysconf(_SC_PAGESIZE))));
+   		strcat(tmpstring, (const void *) *tmpread);
 	 	free(tmpread);
 	 	free(phead);
 
@@ -663,10 +664,10 @@ int pager_syslog(pid_t pid, void *addr, size_t len){
 	//Essa sequencia aloca o restante
 		char *phead = malloc(sysconf(_SC_PAGESIZE));
 		long int *tmpread=malloc(sizeof(long int));
-		*tmpread=(pmem+m->RAMAddr*sysconf(_SC_PAGESIZE));
+		*tmpread= (long int) (pmem+m->RAMAddr*sysconf(_SC_PAGESIZE));
    		
-   		memcpy(phead, *tmpread,sysconf(_SC_PAGESIZE));
-   		strcat(tmpstring,*tmpread);
+   		memcpy(phead, (const void *) *tmpread,sysconf(_SC_PAGESIZE));
+   		strcat(tmpstring, (const void *) *tmpread);
 	 	free(tmpread);
 	 	free(phead);
 
@@ -688,10 +689,10 @@ int pager_syslog(pid_t pid, void *addr, size_t len){
 	 	//Essa sequencia aloca o restante
 		char *phead = malloc(rest);
 		long int *tmpread=malloc(sizeof(long int));
-		*tmpread=(pmem+m->RAMAddr*sysconf(_SC_PAGESIZE));
+		*tmpread= (long int) (pmem+m->RAMAddr*sysconf(_SC_PAGESIZE));
    		
-   		memcpy(phead, *tmpread,rest);
-   		strcat(tmpstring,*tmpread);
+   		memcpy(phead, (const void *) *tmpread,rest);
+   		strcat(tmpstring, (const void *) *tmpread);
 	 	free(tmpread);
 	 	free(phead);
 	}
